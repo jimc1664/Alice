@@ -230,6 +230,9 @@
     <ClInclude Include="..\..\inc\Gem\Resource\ResMan.h">
       <Filter>Header Files\inc\Resource</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\inc\Gem\Org\TemplateCmpnt.h">
+      <Filter>Header Files\inc\Org</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Gem_Main.cpp">

@@ -18,21 +18,23 @@ void Camera::render() {
 
 } */
 
-void Scene::add( Node_Base *nd ) {
+ Scene::Node_Base* Scene::add(Node_Base *nd) {
 	Root.add( nd );
+	return nd;
 }
 
 
 void Scene::addTo( Dis::DrawList & dl) {
-	for( Node_Base &n : Root ) 
-		n.addTo(dl);
+//	for( Node_Base &n : Root ) 
+//		n.addTo(dl);
 }
 
 Scene::UpdateCntx::UpdateCntx(Scene &scn, const float &d )  : Delta(d), Scn(scn), It( scn.Root.start() ) {
 	
-	for(;It != scn.Root.end(); It++ ) {
+/*	for(;It != scn.Root.end(); It++ ) {
 		It->update(*this);
-	}	
+	}
+	*/
 }
  
 void Scene::UpdateCntx::destroy( Node_Base * nd ) {
@@ -58,15 +60,6 @@ void Scene::clear() {
 		ToBeDeleted[TBDi].add(nd);
 	}
 	Root.detachAll();
-}
-
-void TestObj::addTo( Dis::DrawList & dl) {
-	dl.add<Dis::DrawTestCube>(this);
-}
-
-void TestObj::update( Scene::UpdateCntx &cntx) {
-	Rot *= quatF::yRotation(cntx.Delta *0.1f);
-	//Pos += 0.1f;
 }
 
 
@@ -109,3 +102,16 @@ void Texture::setSection( const rects &section, const vec2s &dim ) {
 Texture::~Texture() {
 	//delete Hdwr;
 }
+
+
+void Cmpnt::TestObj::addTo(Dis::DrawList & dl, Prm &p) {
+	auto &off = p.get<Offset>();
+	dl.add<Dis::DrawTestCube>( mat3x4f::transform(off.Pos,off.Rot.as<mat3f>(),Scale ), *Tex );
+}
+
+void Cmpnt::TestObj::update(Scene::UpdateCntx &cntx, Prm &p) {
+	auto &off = p.get<Offset>();
+	off.Rot *= quatF::yRotation(cntx.Delta *0.1f);
+	//Pos += 0.1f;
+}
+

@@ -274,7 +274,9 @@ void Texture::apply(DisMain &dm ) {
 }
 
 
+
 Texture* Texture::fromFile(const CStr &s) {
+	
 	auto ret = new Texture;
 	DStr s2 = s;
 

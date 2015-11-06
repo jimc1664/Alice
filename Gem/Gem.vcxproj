@@ -486,6 +486,7 @@
     <ClInclude Include="..\..\inc\Gem\Org\msgQ.h" />
     <ClInclude Include="..\..\inc\Gem\Org\ObjRefAry.h" />
     <ClInclude Include="..\..\inc\Gem\Org\sList.h" />
+    <ClInclude Include="..\..\inc\Gem\Org\TemplateCmpnt.h" />
     <ClInclude Include="..\..\inc\Gem\OS\Time.h" />
     <ClInclude Include="..\..\inc\Gem\OS\Window.h" />
     <ClInclude Include="..\..\inc\Gem\Resource\Resource.h" />
