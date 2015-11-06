@@ -236,7 +236,7 @@ public:
 		//Scene.add( new Scene3::ScnNode<Scene3::TestObj>( &TestTex, vec3f(7,0,-3) ) );
 		//Scene.add( new Scene3::ScnNode<Scene3::TestObj>( &TestTex, vec3f(-7,0,-3) ) );
 		auto *to = new Scene3::TestObj();
-		to->Pos = vec3f(0, -2, 5);
+		to->Pos= vec3f(0, -2, 5);
 		to->Tex = &TestTex;
 		//Scene3::ScnNode<Scene3::Camera>* cam = Scene.add(new Scene3::ScnNode<Scene3::Camera>( vec3f(0,0,0) );
 		

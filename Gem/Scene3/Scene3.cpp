@@ -18,9 +18,9 @@ void Camera::render() {
 
 } */
 
- Scene::Node_Base* Scene::add(Node_Base *nd) {
+void Scene::add_Node(Node_Base *nd) {
 	Root.add( nd );
-	return nd;
+	//return nd;
 }
 
 
@@ -105,8 +105,7 @@ Texture::~Texture() {
 
 
 void Cmpnt::TestObj::addTo(Dis::DrawList & dl, Prm &p) {
-	auto &off = p.get<Offset>();
-	dl.add<Dis::DrawTestCube>( mat3x4f::transform(off.Pos,off.Rot.as<mat3f>(),Scale ), *Tex );
+	dl.add<Dis::DrawTestCube>(this);
 }
 
 void Cmpnt::TestObj::update(Scene::UpdateCntx &cntx, Prm &p) {

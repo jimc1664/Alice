@@ -572,3 +572,8 @@ void processMeshTextureCoords(FbxMesh * mesh, Vertex * verts, int numVerts)
 	}
 }
 
+
+DrawTestCube::DrawTestCube( Scene3::TestObj *o ) : Tex( *o->Tex) {
+
+	Trans.setTransformation(o->Pos, o->Rot.as<mat3f>(), o->Scale);
+}
