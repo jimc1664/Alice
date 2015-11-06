@@ -26,3 +26,4 @@ x64
 *.opensdf
 *.suo
 /Alice/out/Alice_d.exe
+/*.suo
