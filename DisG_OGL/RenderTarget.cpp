@@ -7,7 +7,7 @@
 RenderTarget::RenderTarget( const vec2u16 &size ) : Size(size) {
 
 }
-void RenderTarget::render(DisMain &dm) {
+void RenderTarget::render(RenderingCntx &rc) {
 
 	/*
 	for( auto &c : Cameras ) {

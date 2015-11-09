@@ -269,7 +269,7 @@ void Texture::gen(DisMain &dm, ptr imageBuffer, u32 width, u32 height, u32 intFo
 }
 
 
-void Texture::apply(DisMain &dm ) {
+void Texture::apply(RenderingCntx &dm ) {
 	glBindTexture(GL_TEXTURE_2D, TexID);
 }
 

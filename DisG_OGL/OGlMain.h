@@ -77,6 +77,12 @@ private: friend struct Singleton<DisMain>;
 
 typedef DisMain OGlMain ;
 
+struct RenderingCntx {
+	RenderingCntx( OGlMain &dm ): Dm(dm) {
+
+	}
+	OGlMain &Dm;
+};
 
 } }
 

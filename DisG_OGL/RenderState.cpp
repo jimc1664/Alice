@@ -31,11 +31,25 @@ void RenderState_2d::proc( DisMain &dm ) const {
 	//glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
+	glBindVertexArray(0);
+	glUseProgram(0);
+
 }
 
 float tRot = 0;
 void RenderState_3d::proc( DisMain &dm ) const {
 
+	//glDisable(GL_TEXTURE_2D);		
+	glDisable(GL_BLEND); 
+
+		glCullFace(GL_BACK);
+	glEnable(GL_CULL_FACE);
+
+	glEnable(GL_DEPTH_TEST);
+	glDepthFunc(GL_LESS);
+
+	/*
+    //calculate screen ration
 // GLfloat ratio;
 
 	 int height = 768, width = 1024;
@@ -44,16 +58,11 @@ void RenderState_3d::proc( DisMain &dm ) const {
         height = 1;
     }
 
-	//glDisable(GL_TEXTURE_2D);		
-	glDisable(GL_BLEND); 
-
-    //calculate screen ration
-
 
   //  glClearColor( 0.0f, 0.0f, 0.0f, 0.0f );
     //clear the colour and depth buffer
    // glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
-
+	
     //Swith to ModelView
     glMatrixMode( GL_MODELVIEW );
     //Reset using the Indentity Matrix
@@ -63,6 +72,7 @@ void RenderState_3d::proc( DisMain &dm ) const {
 
     glRotatef(tRot +=-0.01f,0.0f,1.0f,0.0f);
 
+	*/
 }
 
 using namespace RS_D;

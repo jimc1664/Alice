@@ -228,6 +228,8 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <BrowseInformation>true</BrowseInformation>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <MinimalRebuild>false</MinimalRebuild>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -329,8 +331,10 @@
     <ClCompile Include="DisG_OGl_Main.cpp" />
     <ClCompile Include="DrawList.cpp" />
     <ClCompile Include="MainTarget.cpp" />
+    <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="RenderState.cpp" />
     <ClCompile Include="RenderTarget.cpp" />
+    <ClCompile Include="ShaderProg.cpp" />
     <ClCompile Include="Test.cpp" />
     <ClCompile Include="Texture.cpp" />
   </ItemGroup>

@@ -320,8 +320,9 @@
       <Optimization>Disabled</Optimization>
       <InlineFunctionExpansion>Default</InlineFunctionExpansion>
       <PreprocessorDefinitions>DEBUG;_GEM_TEST_;_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <MultiProcessorCompilation>false</MultiProcessorCompilation>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <BrowseInformation>true</BrowseInformation>
+      <MinimalRebuild>false</MinimalRebuild>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -465,8 +466,10 @@
     <ClInclude Include="..\..\inc\Gem\Dis\DisMain.h" />
     <ClInclude Include="..\..\inc\Gem\Dis\DrawList.h" />
     <ClInclude Include="..\..\inc\Gem\Dis\MainTarget.h" />
+    <ClInclude Include="..\..\inc\Gem\Dis\Mesh.h" />
     <ClInclude Include="..\..\inc\Gem\Dis\RenderState.h" />
     <ClInclude Include="..\..\inc\Gem\Dis\RenderTarget.h" />
+    <ClInclude Include="..\..\inc\Gem\Dis\ShaderProg.h" />
     <ClInclude Include="..\..\inc\Gem\Dis\Texture.h" />
     <ClInclude Include="..\..\inc\Gem\JUI\InputGroup.h" />
     <ClInclude Include="..\..\inc\Gem\JUI\JUI.h" />
@@ -496,6 +499,8 @@
     <ClInclude Include="..\..\inc\Gem\Scene2\Sprite.h" />
     <ClInclude Include="..\..\inc\Gem\Scene2\Texture.h" />
     <ClInclude Include="..\..\inc\Gem\Scene3\Camera.h" />
+    <ClInclude Include="..\..\inc\Gem\Scene3\Passive.h" />
+    <ClInclude Include="..\..\inc\Gem\Scene3\Mesh.h" />
     <ClInclude Include="..\..\inc\Gem\Scene3\Scene.h" />
     <ClInclude Include="..\..\inc\Gem\Scene3\TestObj.h" />
     <ClInclude Include="..\..\inc\Gem\Scene3\Texture.h" />

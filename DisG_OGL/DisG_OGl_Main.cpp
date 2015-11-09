@@ -92,7 +92,7 @@ void OGlMain::mainLoop() {
 			//auto &o = *static_cast<MainTarget*>(&it);
 			//o._render();
 
-			o.render( *this );
+			o.render( RenderingCntx( *this) );  //new RenderingCntx for each rendering
 		}
 		//std::cout<<" time "<<time.updateElap().asI()<<"\n";
 		Sleep(1 );
@@ -156,7 +156,9 @@ void OGlMain::deinit() {
 	//DXFactory.release();
 }
 
-
+namespace Gem{ namespace Dis {
+DisMain& renderingCntx_DM(RenderingCntx&rc) { return rc.Dm; }
+} }
 
 using namespace Dis;
 

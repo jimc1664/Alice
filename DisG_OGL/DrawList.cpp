@@ -19,9 +19,9 @@ DrawSprite::DrawSprite( Scene2::Sprite* spr ) : Tex( *spr->Tex ){
 	Trans.setTransformation(spr->Pos, spr->Rotation, spr->Size);
 }
 
-void DrawSprite::proc(DisMain &dm) {
+void DrawSprite::proc(RenderingCntx &rc) {
 
-	Tex.Hdwr->apply(dm);
+	Tex.Hdwr->apply(rc);
 
 	rectf uv = Tex.Section;
 	glBegin(GL_QUADS);
@@ -40,17 +40,14 @@ void DrawSprite::proc(DisMain &dm) {
 }
 
 
-void DrawList::render( DisMain &dm ) {
+void DrawList::render( RenderingCntx &rc ) {
 
-	procAll(&dm);
-
-	
+	procAll(&rc);
 }
 
 
 BufferedDrawList::BufferedDrawList() {
-	ToRender = &Dl[0];
-	
+	ToRender = &Dl[0];	
 	Ui = 2;
 	/*
 	static_assert( sizeof(Offset) == sizeof(u32), "err" );
@@ -66,18 +63,17 @@ BufferedDrawList::DrawListRef BufferedDrawList::forUpdate() {
 		dl = &Dl[Ui];
 		if(--Ui == 0) Ui = 2;
 		if (dl == Rendering || dl == ToRender)continue;
-
 		break;
 	}
 	dl->clear();
 	return DrawListRef( *dl, *this);
 }
 
-void BufferedDrawList::render(DisMain &dm) {
+void BufferedDrawList::render(RenderingCntx &rc) {
 
 	Rendering = ToRender;
 
-	Rendering->render(dm);
+	Rendering->render(rc);
 
 	Rendering = null;
 

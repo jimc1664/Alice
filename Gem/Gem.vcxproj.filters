@@ -233,6 +233,18 @@
     <ClInclude Include="..\..\inc\Gem\Org\TemplateCmpnt.h">
       <Filter>Header Files\inc\Org</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\inc\Gem\Scene3\Mesh.h">
+      <Filter>Header Files\inc\Scene3</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc\Gem\Dis\Mesh.h">
+      <Filter>Header Files\inc\Dis</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc\Gem\Scene3\Passive.h">
+      <Filter>Header Files\inc\Scene3</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc\Gem\Dis\ShaderProg.h">
+      <Filter>Header Files\inc\Dis</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Gem_Main.cpp">

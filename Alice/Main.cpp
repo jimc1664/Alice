@@ -1,10 +1,12 @@
-
 #include "stdafx.h"
 
 #include <Gem/Main.h>
 #include <Gem/MainWindow.h>
 #include <Gem/ConCur/Thread.h>
 #include <Gem/ConCur/ConCur.h>
+
+#include <Gem/Dis/ShaderProg.h>
+
 
 #include <Gem/Scene2/Camera.h>
 #include <Gem/Scene2/Sprite.h>
@@ -13,7 +15,9 @@
 
 #include <Gem/Scene3/Camera.h>
 #include <Gem/Scene3/TestObj.h>
+#include <Gem/Scene3/Passive.h>
 #include <Gem/Scene3/Texture.h>
+#include <Gem/Scene3/Mesh.h>
 #include <Gem/Scene3/Scene.h>
 
 
@@ -209,15 +213,23 @@ public:
 
 class Game  {
 public:
-
-
-	Game()
-		: 
+	Game() : 
 		CntrTex( CSTR("Media//ui//counter.png") ),
-		TestTex( CSTR("Media//armoredrecon_diff.png") ),
+		StdShdr( Dis::ShaderProg::fromFile( CSTR("Media//shaders//textureVS.glsl"), CSTR("Media//shaders//textureFS.glsl") ) ),
+		Tex1( CSTR("Media//armoredrecon_diff.png") ),
+		Tex2( CSTR("Media//Tank1DF.png") ),
+		Mesh1( CSTR("Media//armoredrecon.fbx") ),
+		Mesh2( CSTR("Media//Tank1.FBX") ),
+		Car( Mesh1, Tex1, *StdShdr ),
+		Tank( Mesh2, Tex2, *StdShdr ),
 		Cntr( CntrTex, vec2f(900,50), 0.4f, 0 )
 	{
 
+		Mvmnt.Key[0] = 'A';
+		Mvmnt.Key[1] = 'D';
+		Mvmnt.Key[2] = 'W';
+		Mvmnt.Key[3] = 'S';
+		MoveObj = 0;
 	}
 
 	void loop( volatile bool &shutdown, Dis::BufferedDrawList &bdl ) {
@@ -232,28 +244,49 @@ public:
 		Cntr.Value = 0;
 
 		Scene.clear();
-		//Scene.add( new Scene3::ScnNode<Scene3::TestObj>( &TestTex, vec3f(0,-2,5) ) );
-		//Scene.add( new Scene3::ScnNode<Scene3::TestObj>( &TestTex, vec3f(7,0,-3) ) );
-		//Scene.add( new Scene3::ScnNode<Scene3::TestObj>( &TestTex, vec3f(-7,0,-3) ) );
-		auto *to = new Scene3::TestObj();
+				/*auto *to = new Scene3::TestObj();
 		to->Pos= vec3f(0, -2, 5);
 		to->Tex = &TestTex;
+		Scene.add(to);
+
+		auto lambda = [&] ( ) { 
+
+		to->Pos= vec3f(0, -2, 5);
+		to->Tex = &TestTex;
+			
+		};   */
+
+
 		//Scene3::ScnNode<Scene3::Camera>* cam = Scene.add(new Scene3::ScnNode<Scene3::Camera>( vec3f(0,0,0) );
+		MoveObj = Scene.add( new Scene3::PassiveObj( Car, vec3f(0,-2,5) ) );
+		Scene.add( new Scene3::PassiveObj( Tank, vec3f(7,0,-3), quatF::identity(), vec3f(1,1,1)*1.25f ) );
+		Scene.add( new Scene3::PassiveObj( Tank, vec3f(-7,0,-3), quatF::identity(), vec3f(1,1,1)*0.75f ) );
+
+		auto cam = Scene.add( new Scene3::CameraObj( vec3f(0,0,-20.0f) ) );
 		
+		Mvmnt.activate();
+		MoveObj = cam;
+
 		Dis::RenderState_2d rs2;
 		Dis::RenderState_3d rs3;
-		
-		
+				
 		Dis::RS_ViewPort vp; vp.ScrnSz = vec2u(1024, 768);
 		vp.apply();
 		Dis::RS_Ortho ortho; ortho.ScrnSz = vec2u(1024, 768); ortho.Height = 768;
 		Dis::RS_Projection proj; proj.ScrnSz = vec2u(1024, 768);
 
+	
 		for(;!shutdown;) {
 			
 			time.update();
 			
 			Scene.update(deltaTime);
+
+			if( MoveObj ) {
+				float speed = 5.0f  * deltaTime;
+				auto a = Mvmnt.value();
+				MoveObj->Pos += vec3f(a.x,0,a.y)*speed;
+			}
 
 			{
 				auto dl = bdl.forUpdate();			
@@ -262,7 +295,9 @@ public:
 				proj.addTo(dl);
 				rs3.addTo(dl);
 
-				Scene.addTo(dl);
+				//Scene.addTo(dl);
+
+				Scene.render( dl, cam);
 
 				ortho.addTo(dl);
 				rs2.addTo(dl);
@@ -278,10 +313,19 @@ public:
 		//Scene.clear();
 	}
 
+	Dis::ShaderProg *StdShdr;
+
 	Scene2::Texture CntrTex;
-	Scene3::Texture TestTex;
+	
 	Scene3::Scene Scene;
+	Scene3::Texture  Tex1, Tex2;
+	Scene3::Mesh Mesh1, Mesh2;
+	Scene3::Passive Tank, Car;
+
 	Counter Cntr;
+	
+	JUI::AxisDual Mvmnt;
+	Scene3::Cmpnt::Offset *MoveObj;
 };
 
 

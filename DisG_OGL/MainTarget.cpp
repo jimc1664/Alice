@@ -159,15 +159,15 @@ void MainTarget::init( DisMain &dm ) {
 	Rebuild = 0; */
 }
 
-void MainTarget::render(DisMain &dm) {
+void MainTarget::render(RenderingCntx &rc) {
 
-	RenderTarget::render(dm);
+	RenderTarget::render(rc);
 
 
 	glClearColor(0, 0, 0.5f, 0);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	DrawL.render(dm);
+	DrawL.render(rc);
 
 	SwapBuffers(Hdc);
 }

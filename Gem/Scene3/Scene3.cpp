@@ -1,48 +1,34 @@
 #include "../stdafx.h"
 
-#include <Gem/Scene3/Camera.h>
-#include <Gem/Scene3/TestObj.h>
 #include <Gem/Scene3/Scene.h>
 #include <Gem/Dis/DrawList.h>
 
 
-#include <Gem/Scene3/Texture.h>
-#include <Gem/Dis/Texture.h>
-
 
 using namespace Scene3;
 
-/*
-void Camera::render() {
 
-
-} */
-
-void Scene::add_Node(Node_Base *nd) {
+void Scene::addNode(Node_Base *nd) {
 	Root.add( nd );
 	//return nd;
 }
 
 
-void Scene::addTo( Dis::DrawList & dl) {
-//	for( Node_Base &n : Root ) 
-//		n.addTo(dl);
-}
 
-Scene::UpdateCntx::UpdateCntx(Scene &scn, const float &d )  : Delta(d), Scn(scn), It( scn.Root.start() ) {
+UpdateCntx::UpdateCntx(Scene &scn, const float &d )  : Delta(d), Scn(scn), It( scn.Updateables.start() ) {
 	
-/*	for(;It != scn.Root.end(); It++ ) {
-		It->update(*this);
+	for(;It != scn.Updateables.end(); It++ ) {
+		It->updateObj(*this);
 	}
-	*/
+	
 }
  
-void Scene::UpdateCntx::destroy( Node_Base * nd ) {
+void UpdateCntx::destroy( Node_Base * nd ) {
 	detach(nd);
 	Scn.ToBeDeleted[Scn.TBDi].add(nd);
 }
  
-void Scene::UpdateCntx::detach( Node_Base * nd ) {
+void UpdateCntx::detach( Node_Base * nd ) {
 	It.detachCur();
 	It--;
 }
@@ -62,6 +48,8 @@ void Scene::clear() {
 	Root.detachAll();
 }
 
+#include <Gem/Scene3/Texture.h>
+#include <Gem/Dis/Texture.h>
 
 Texture::Texture( const CStr &file ) : Section(0,0,1,1) {
 
@@ -103,14 +91,60 @@ Texture::~Texture() {
 	//delete Hdwr;
 }
 
+#include <Gem/Scene3/Mesh.h>
+#include <Gem/Dis/Mesh.h>
 
-void Cmpnt::TestObj::addTo(Dis::DrawList & dl, Prm &p) {
-	dl.add<Dis::DrawTestCube>(this);
+Mesh::Mesh( const CStr &file ) {
+
+	Hdwr = Dis::Mesh::fromFile(file);
 }
 
-void Cmpnt::TestObj::update(Scene::UpdateCntx &cntx, Prm &p) {
+
+Mesh::~Mesh() {
+	//delete Hdwr;
+}
+
+#include <Gem/Scene3/Camera.h>
+#include <Gem/Math/Matrix4.h>
+
+void Cmpnt::Camera::setCam(Dis::DrawList & dl, Prm &p ) {
+	auto &off = p.get<Offset>();
+	dl.View *= mat3x4f::view(off.Pos, off.Rot.as<mat3f>());
+
+	auto m = mat4f::camLookAt(off.Pos, vec3f(0, 0, 0), vec3f(0, 1, 0) );
+}
+
+#include <Gem/Scene3/TestObj.h>
+
+void Cmpnt::TestCmp::addTo(Dis::DrawList & dl, Prm &p) {
+	auto &off = p.get<Offset>();
+	dl.add<Dis::DrawTestCube>( mat3x4f::transform(off.Pos,off.Rot.as<mat3f>(), Scale ), *Tex ); //todo == vec3f::one()
+}
+
+void Cmpnt::TestCmp::onUpdate( UpdateCntx &cntx, Prm &p) {
 	auto &off = p.get<Offset>();
 	off.Rot *= quatF::yRotation(cntx.Delta *0.1f);
 	//Pos += 0.1f;
 }
+#include <Gem/Scene3/Passive.h>
+
+void Cmpnt::PassiveInst::addTo(Dis::DrawList & dl, Prm &p) {
+	auto &off = p.get<Offset>();
+	auto w = mat3x4f::transform(off.Pos, off.Rot.as<mat3f>(), Scale);
+	auto v = dl.View;
+	auto wv = w*v;
+
+	dl.add<Dis::DrawPassive>( mat3x4f::transform(off.Pos,off.Rot.as<mat3f>(), Scale ) *dl.View, *Dat ); //todo == vec3f::one()
+}
+
+void Cmpnt::PassiveInst::onUpdate( UpdateCntx &cntx, Prm &p) {
+	auto &off = p.get<Offset>();
+	off.Rot *= quatF::yRotation(cntx.Delta *0.1f);
+	//Pos += 0.1f;
+}
+
+Passive::~Passive() {
+
+}
+
 
