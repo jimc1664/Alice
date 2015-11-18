@@ -25,12 +25,14 @@ void DrawSprite::proc(RenderingCntx &rc) {
 
 	rectf uv = Tex.Section;
 	glBegin(GL_QUADS);
-		glTexCoord2f(uv.x,uv.w);
-		glVertex2fv( (vec2f(-0.5f,0.5f)*Trans).ptr() );
-		glTexCoord2f(uv.z,uv.w);
-		glVertex2fv( (vec2f(0.5f,0.5f)*Trans).ptr() );
+
+	
 		glTexCoord2f(uv.z,uv.y); 
 		glVertex2fv( (vec2f(0.5f,-0.5f)*Trans).ptr() );
+		glTexCoord2f(uv.z,uv.w);
+		glVertex2fv( (vec2f(0.5f,0.5f)*Trans).ptr() );
+		glTexCoord2f(uv.x,uv.w);
+		glVertex2fv( (vec2f(-0.5f,0.5f)*Trans).ptr() );
 		glTexCoord2f(uv.x,uv.y); 
 		glVertex2fv( (vec2f(-0.5f,-0.5f)*Trans).ptr() );
 

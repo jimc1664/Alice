@@ -245,6 +245,9 @@
     <ClInclude Include="..\..\inc\Gem\Dis\ShaderProg.h">
       <Filter>Header Files\inc\Dis</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\inc\Gem\Math\Randomizer.h">
+      <Filter>Header Files\inc\Math</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Gem_Main.cpp">

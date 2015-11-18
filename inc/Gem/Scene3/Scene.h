@@ -47,7 +47,7 @@ public:
 
 	template<class Cam> void render( Dis::DrawList & dl, Cam *cam) {
 		//children
-		cam->setCam( dl, cam->prmFor<Camera>() );
+		cam->setCam( dl, cam->prmFor<Cmpnt::Camera>() );
 		auto *nd = static_cast<Node_Base*>(cam);
 		if( cam->Prnt == null ) {
 			for( auto it = Root.start(); it != Root.end(); it++ ) {
@@ -143,7 +143,7 @@ template<  typename Comp > struct S3_T_Base : public Node_Base, public Comp {
 	virtual void addObjTo(Dis::DrawList &dl) { procForAll(dl); } 
 	virtual ~S3_T_Base() {}
 
-	template<SumCmpnt> typename SubCmpnt::Prm prmFor() { return PrmHelper<typename Typ1::Prm>::cast(this) }
+	template<typename SubCmpnt> typename SubCmpnt::Prm prmFor() { return PrmHelper<typename SubCmpnt::Prm>::cast(this); }
 };
 template< typename Typ1, typename Typ2 = Nothing, typename Typ3 = Nothing, typename Typ4 = Nothing, typename Typ5 = Nothing > class S3_T;
 template< typename Typ1> class S3_T<Typ1, Nothing, Nothing, Nothing, Nothing> : public S3_T_Base<  typename Typ1::Req::Comp > { };

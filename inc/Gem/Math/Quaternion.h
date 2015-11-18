@@ -5,6 +5,9 @@
 #include "../Basic/Tuple.h"
 #include "Vec3.h"
 
+
+//a reference http://www.cs.stanford.edu/~acoates/quaternion.h
+
 namespace Gem {
 
 template<class typ> class quat_T : public tuple<typ, typ, typ, typ>, public Convertable<quat_T<typ>>  {
@@ -50,7 +53,7 @@ public:
 		return *this;
 	}
 	quat&	aimZAxis( const v3& p1, const v3& p2 ) { return aimZAxis( (p2-p1).normalise() ); }
-	quat&	SetXRotation(typ t) {
+	quat&	setXRotation(typ t) {
 		t *= (typ)0.5;
 		w =cos(t); x = sin(t); y = 0; z = 0;
 		return *this;
@@ -65,6 +68,22 @@ public:
 		w =cos(t); z = sin(t); x = 0; y = 0;
 		return *this;
 	}
+	quat& setEuler(const v3& v) {
+		v3 hv = v * (typ)0.5;
+		typ c1 = cos(hv.z );
+		typ c2 = cos(hv.y );
+		typ c3 = cos(hv.x );
+		typ s1 = sin(hv.z );
+		typ s2 = sin(hv.y );
+		typ s3 = sin(hv.x );
+
+		x = c1*c2*s3 - s1*s2*c3;
+		y = c1*s2*c3 + s1*c2*s3;
+		z = s1*c2*c3 - c1*s2*s3;
+		w = c1*c2*c3 + s1*s2*s3;
+		return *this;
+    }
+
 	quat&	setAxisAngle(const v3 &a, typ t) {
 		t *= (typ)0.5;
 		//f32 st = sin(t);
@@ -74,6 +93,7 @@ public:
 
 	quat& setIdentity() { Axis = 0; w = 1.f; return *this; }
 
+	static quat euler(const v3 &t) { quat q; q.setEuler(t); return q; }
 	static quat xRotation(const typ &t) { quat q; q.setXRotation(t); return q; }
 	static quat yRotation(const typ &t) { quat q; q.setYRotation(t); return q; }
 	static quat zRotation(const typ &t) { quat q; q.setZRotation(t); return q; }

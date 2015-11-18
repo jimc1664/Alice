@@ -83,16 +83,24 @@ void MainTarget::init( DisMain &dm ) {
 		}
 	}
 	checkError();
+	
+	if( GLEW_OK != glewInit() ) {
+		int err = glGetError();
+		auto es = glewGetErrorString( err );
+	}
+	else {
+		/* flush the OpenGL error state, ignoring all errors */
+		while( GL_NO_ERROR != glGetError() );
+	}
 
-	glewInit();
-
+	int err2 = GetLastError();
+	SetLastError(0);
 	dm.Outputs.add(this);
 	dm.Cntx = Cntx;
 
 
 
-	SetLastError( 0);
-	checkError();
+
 
 	/*
 	 DWORD errorCode=GetLastError();
@@ -164,7 +172,7 @@ void MainTarget::render(RenderingCntx &rc) {
 	RenderTarget::render(rc);
 
 
-	glClearColor(0, 0, 0.5f, 0);
+	glClearColor(0.1f, 0.1f, 0.14f, 0);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	DrawL.render(rc);

@@ -55,9 +55,9 @@ public:
 	
 	ary() : Allocated(0), Count(0), Data(0)			{}
 	ary( const ary<Obj> &s )						: Allocated( s.Count ), Count(s.Count), Data( alloc(s.Count) ) { Cn.mulConstruct(Data,Count,s.Data); }
-	ary( const u32 &a )								: Allocated(a), Count(0), Data( alloc(a) )	{}
-	ary( const u32 &a, const u32 &c )				: Allocated(a), Count(c), Data( alloc(a) )	{ Cn.mulConstruct(Data,c); }
-	ary( const u32 &a, const u32 &c, const Obj &o )	: Allocated(a), Count(c), Data( alloc(a) )	{ Cn.mulConstruct(Data,c,o); }
+	ary( const u32 &allocated )								: Allocated(allocated), Count(0), Data( alloc(allocated) )	{}
+	ary( const u32 &allocated, const u32 &count )				: Allocated(allocated), Count(count), Data( alloc(allocated) )	{ Cn.mulConstruct(Data,count); }
+	ary( const u32 &allocated, const u32 &count, const Obj &o )	: Allocated(allocated), Count(count), Data( alloc(allocated) )	{ Cn.mulConstruct(Data,count,o); }
 
 	void reserve( const u32 &amnt ) { Assume(Data == 0); Data = alloc(Allocated=amnt); }
 	Template1 ary( const Steal_Struct<T> &s )		: Allocated( s->Allocated ), Count(s->Count), Data( s->Data ) {  s->Allocated = s->Count = 0; s->Data = 0; }
@@ -74,10 +74,10 @@ public:
 	const u32&	count()						  const { return Count; }
 	u32			sizeOf()					  const { return Count*sizeof(Obj); }
 
-	Template1 Obj&	add( T &&a, const u32 &extendBy = DEFAULT_EXTENDBY ) {
-		Assume( !Data || (((sizet)&a < (sizet)Data) || ((sizet)&a > (sizet)&Data[Allocated-1]))); //copying stored data could be errorous as a following realloc could therefore invalidate 'a'
+	Template1 Obj&	add( T &&allocated, const u32 &extendBy = DEFAULT_EXTENDBY ) {
+		Assume( !Data || (((sizet)&allocated < (sizet)Data) || ((sizet)&allocated > (sizet)&Data[Allocated-1]))); //copying stored data could be errorous as allocated following realloc could therefore invalidate 'allocated'
 		extendIfNeeded( Count+1, extendBy ); 
-		Cn.construct( Data[Count], a );
+		Cn.construct( Data[Count], allocated );
 		return Data[Count++];
 	}
 	Obj&	add() {
@@ -86,8 +86,8 @@ public:
 		Cn.construct( Data[Count] );
 		return Data[Count=nc];
 	}
-	void	push( const Obj &a ) { add(a); }
-	u32		pushI( const Obj &a ) { u32 r = Count; add(a); return r;  }
+	void	push( const Obj &allocated ) { add(allocated); }
+	u32		pushI( const Obj &allocated ) { u32 r = Count; add(allocated); return r;  }
 	u32		pushI() { u32 r = Count; add(); return r;  }
 
 	Obj pop() {
@@ -96,15 +96,15 @@ public:
 		decCount();
 		return ret;
 	}
-	void addMul( const u32 &amnt, const Obj a[], const u32 &extendBy ) { 
+	void addMul( const u32 &amnt, const Obj allocated[], const u32 &extendBy ) { 
 		Assume( amnt <= extendBy );
 		extendIfNeeded( Count+amnt, extendBy ); 
-		Cn.mulConstruct( &Data[Count], amnt, a );
+		Cn.mulConstruct( &Data[Count], amnt, allocated );
 		Count += amnt;
 	}
-	void addMul( const u32 &amnt, const Obj a[] ) { 
+	void addMul( const u32 &amnt, const Obj allocated[] ) { 
 		extendIfNeeded( Count+amnt, amnt ); 
-		Cn.mulConstruct( &Data[Count], amnt, a );
+		Cn.mulConstruct( &Data[Count], amnt, allocated );
 		Count += amnt;
 	}
 	void addMul( const u32 &amnt )	{ 
@@ -134,7 +134,7 @@ public:
 	}
 	class iter {
 	public:
-		iter( ary &a, const u32 &i ) : Ind(i), Array(a) {}
+		iter( ary &allocated, const u32 &i ) : Ind(i), Array(allocated) {}
 		void operator++(int)				{ Ind++; }
 		void operator++()				{ ++Ind; }
 		operator bool()					{ return Ind < Array.count(); }
@@ -152,7 +152,7 @@ public:
 
 	/*class rvsIter : public iter {
 	public:
-		rvsIter( ary &a, const u32 &i ) : iter(a, i ) {}
+		rvsIter( ary &allocated, const u32 &i ) : iter(allocated, i ) {}
 		bool operator--(int)				{ return Ind-- != 0; }
 	}; */
 
@@ -173,7 +173,7 @@ public:
 	}
 
 protected:
-	static	Obj*	alloc( const u32 &a ) { return static_cast<Obj*>(malloc(a*sizeof(Obj))); }
+	static	Obj*	alloc( const u32 &allocated ) { return static_cast<Obj*>(malloc(allocated*sizeof(Obj))); }
 	void	extendIfNeeded( const u32 &nCount, const u32 &extendBy = DEFAULT_EXTENDBY ) { 		
 		if( nCount > Allocated ) {
 			Data = static_cast<Obj*>(realloc(Data,(Allocated+=(Allocated+extendBy))*sizeof(Obj)));

@@ -50,6 +50,7 @@ struct MeshData
 
 
 void checkError();
+void clearError();
 
 Mesh::Mesh() {
 	VA = VB = IB = IC = 0;
@@ -61,15 +62,24 @@ void Mesh::fromFile( DisMain &dm, const CStr &s) {
 
 	MeshData md;
 	if( loadFBXFromFile( s, &md ) ) {
-
+		clearError();
+		printf("load mesh %s \n", s.str());
 		glGenVertexArrays(1, &VA);
 		glBindVertexArray(VA);
 
 		glGenBuffers(1, &VB);
 		glBindBuffer(GL_ARRAY_BUFFER, VB);
 
-		glBufferData(GL_ARRAY_BUFFER, md.getNumVerts()*sizeof(Vertex), &md.vertices[0], GL_STATIC_DRAW);
+		//char *d = new char[md.getNumVerts()*sizeof(Vertex)];
 
+		//memcpy(d, &md.vertices[0], md.getNumVerts()*sizeof(Vertex));
+				int err = glGetError();
+		auto es = glewGetErrorString( err );
+		checkError();
+		int a = md.getNumVerts()*sizeof(Vertex), b = sizeof(Vertex), c = md.getNumVerts();
+		glBufferData(GL_ARRAY_BUFFER, md.getNumVerts()*sizeof(Vertex), &md.vertices[0], GL_STATIC_DRAW);
+				err = glGetError();
+		es = glewGetErrorString( err );
 		glGenBuffers(1, &IB);
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IB);
 		glBufferData(GL_ELEMENT_ARRAY_BUFFER, (IC =  md.getNumIndices())*sizeof(int), &md.indices[0], GL_STATIC_DRAW);
@@ -87,7 +97,7 @@ void Mesh::fromFile( DisMain &dm, const CStr &s) {
 		glBindVertexArray(0);
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-//		checkError();
+		checkError();
 	} else Error("failed to load fbx..");
 }
 
@@ -302,4 +312,6 @@ void processMeshTextureCoords(FbxMesh * mesh, Vertex * verts, int numVerts)
 		}
 	}
 }
+
+
 

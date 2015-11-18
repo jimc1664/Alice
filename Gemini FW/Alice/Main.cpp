@@ -216,8 +216,10 @@ public:
 	Game() : 
 		CntrTex( CSTR("Media//ui//counter.png") ),
 		StdShdr( Dis::ShaderProg::fromFile( CSTR("Media//shaders//textureVS.glsl"), CSTR("Media//shaders//textureFS.glsl") ) ),
+		PlanetShdr( Dis::ShaderProg::fromFile( CSTR("Media//shaders//planetVS.glsl"), CSTR("Media//shaders//planetFS.glsl") ) ),
 		Tex1( CSTR("Media//armoredrecon_diff.png") ),
 		Tex2( CSTR("Media//Tank1DF.png") ),
+		NoiseTex( CSTR("Media//magic clouds.png") ),
 		Mesh1( CSTR("Media//armoredrecon.fbx") ),
 		Mesh2( CSTR("Media//Tank1.FBX") ),
 		Car( Mesh1, Tex1, *StdShdr ),
@@ -227,8 +229,8 @@ public:
 
 		Mvmnt.Key[0] = 'A';
 		Mvmnt.Key[1] = 'D';
-		Mvmnt.Key[2] = 'W';
-		Mvmnt.Key[3] = 'S';
+		Mvmnt.Key[2] = 'S';
+		Mvmnt.Key[3] = 'W';
 		MoveObj = 0;
 	}
 
@@ -258,11 +260,12 @@ public:
 
 
 		//Scene3::ScnNode<Scene3::Camera>* cam = Scene.add(new Scene3::ScnNode<Scene3::Camera>( vec3f(0,0,0) );
-		MoveObj = Scene.add( new Scene3::PassiveObj( Car, vec3f(0,-2,5) ) );
-		Scene.add( new Scene3::PassiveObj( Tank, vec3f(7,0,-3), quatF::identity(), vec3f(1,1,1)*1.25f ) );
-		Scene.add( new Scene3::PassiveObj( Tank, vec3f(-7,0,-3), quatF::identity(), vec3f(1,1,1)*0.75f ) );
+		MoveObj = Scene.add( new Scene3::TestObj( &NoiseTex, PlanetShdr, vec3f(0,0,0) ) );
+		MoveObj = Scene.add( new Scene3::PassiveObj( Car, vec3f(0,10,20) ) );
+	//	Scene.add( new Scene3::PassiveObj( Tank, vec3f(7,0,-3), quatF::identity(), vec3f(1,1,1)*1.25f ) );
+	//	Scene.add( new Scene3::PassiveObj( Tank, vec3f(-7,0,-3), quatF::identity(), vec3f(1,1,1)*0.75f ) );
 
-		auto cam = Scene.add( new Scene3::CameraObj( vec3f(0,0,-20.0f) ) );
+		auto cam = Scene.add( new Scene3::CameraObj( vec3f(0,5,-20.0f) ) );
 		
 		Mvmnt.activate();
 		MoveObj = cam;
@@ -275,7 +278,7 @@ public:
 		Dis::RS_Ortho ortho; ortho.ScrnSz = vec2u(1024, 768); ortho.Height = 768;
 		Dis::RS_Projection proj; proj.ScrnSz = vec2u(1024, 768);
 
-	
+		bool lMove = false; vec2s16 lMp;
 		for(;!shutdown;) {
 			
 			time.update();
@@ -283,9 +286,25 @@ public:
 			Scene.update(deltaTime);
 
 			if( MoveObj ) {
-				float speed = 5.0f  * deltaTime;
+				float speed = 15.0f  * deltaTime;
 				auto a = Mvmnt.value();
-				MoveObj->Pos += vec3f(a.x,0,a.y)*speed;
+				MoveObj->Pos += vec3f(a.x,0,a.y)*speed  * MoveObj->Rot.as<mat3f>() ;
+		//		printf("p  %f %f %f \n", MoveObj->Pos.x, MoveObj->Pos.y, MoveObj->Pos.z);
+
+				//todo mouse drag object
+				if( JUI::key(JUI::Keycode::LMouse) ) {
+					if( lMove ) {
+						vec2f mr = ((vec2f)(lMp - JUI::mPos())) *deltaTime*1.0f;
+						//MoveObj->Rot = (quatF::euler( vec3f( mr.y, mr.x, 0)  ) * MoveObj->Rot ).normalise();
+
+						//MoveObj->Rot = (quatF::yRotation( mr.x ) * MoveObj->Rot );
+						//MoveObj->Rot = (quatF::xRotation( mr.y ) * MoveObj->Rot );
+						MoveObj->Rot *= quatF::euler(vec3f(mr.y, mr.x, 0));
+						MoveObj->Rot.normalise();
+					}
+					lMp = JUI::mPos();
+				}
+				lMove = JUI::key(JUI::Keycode::LMouse);
 			}
 
 			{
@@ -313,12 +332,12 @@ public:
 		//Scene.clear();
 	}
 
-	Dis::ShaderProg *StdShdr;
+	Dis::ShaderProg *StdShdr, *PlanetShdr;
 
 	Scene2::Texture CntrTex;
 	
 	Scene3::Scene Scene;
-	Scene3::Texture  Tex1, Tex2;
+	Scene3::Texture  Tex1, Tex2, NoiseTex;
 	Scene3::Mesh Mesh1, Mesh2;
 	Scene3::Passive Tank, Car;
 

@@ -42,7 +42,7 @@ void RenderState_3d::proc( DisMain &dm ) const {
 	//glDisable(GL_TEXTURE_2D);		
 	glDisable(GL_BLEND); 
 
-		glCullFace(GL_BACK);
+		glCullFace(GL_FRONT);
 	glEnable(GL_CULL_FACE);
 
 	glEnable(GL_DEPTH_TEST);

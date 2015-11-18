@@ -480,6 +480,7 @@
     <ClInclude Include="..\..\inc\Gem\Math\Matrix3x4.h" />
     <ClInclude Include="..\..\inc\Gem\Math\Matrix4.h" />
     <ClInclude Include="..\..\inc\Gem\Math\Quaternion.h" />
+    <ClInclude Include="..\..\inc\Gem\Math\Randomizer.h" />
     <ClInclude Include="..\..\inc\Gem\Math\Rect.h" />
     <ClInclude Include="..\..\inc\Gem\Math\Vec2.h" />
     <ClInclude Include="..\..\inc\Gem\Math\Vec3.h" />

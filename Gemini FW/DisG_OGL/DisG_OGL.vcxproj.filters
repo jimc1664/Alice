@@ -45,6 +45,9 @@
     <ClCompile Include="ShaderProg.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Passive.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">

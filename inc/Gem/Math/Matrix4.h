@@ -78,13 +78,13 @@ public:
 			0, 0, (far + near) / nearmfar, -1, 
 			 0, 0, 2*far*near / nearmfar, 0 
 	*/
-
+			//typ clipNear = -clipNear2;  typ clipFar = -clipFar2;
 			typ height = typ(1.0)/tan(fov/typ(2.0));
 			m._01 = m._02 = m._03 = m._10 = m._12 = m._13 = m._20 = m._21 = m._30 = m._31 = m._33 = typ(0);
 			m._00 = (height / aspect);
 			m._11 = height;
-			m._22 = (clipFar+clipNear) / (clipNear-clipFar);
-			m._23 = typ(-1.0);
+			m._22 = -(clipFar+clipNear) / (clipNear-clipFar);
+			m._23 = typ(1.0);
 			m._32 = 2*clipNear*clipFar / (clipNear-clipFar);
 
 	/*		typ height = typ(1.0)/tan(fov/typ(2.0));
@@ -118,9 +118,9 @@ public:
 		m._22   = zAxis.z;
 		m._23   = typ(0);
 
-		m._30   = xAxis.dot(eye);
-		m._31   = yAxis.dot(eye);
-		m._32   = zAxis.dot(eye);
+		m._30   = -xAxis.dot(eye);
+		m._31   = -yAxis.dot(eye);
+		m._32   = -zAxis.dot(eye);
 		m._33   = typ(1);
 
 		return m;

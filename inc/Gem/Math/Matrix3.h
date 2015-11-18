@@ -72,7 +72,9 @@ public:
 
 		return *this;
 	}
-
+	m3& setRotationX( const typ &rot ) { 
+		return setRotation(v3(rot, 0, 0)); //todo...
+	}
 	m3& setRotationY( const typ &rot ) { 
 		const typ cy = cos( rot );
 		const typ sy = sin( rot );
@@ -128,6 +130,7 @@ public:
 	static m3 identity() { return m3().setIdentity(); }
 
 	static m3 rotation( const v3 &rot ) { return m3().setRotation( rot ); }
+	static m3 rotationX( const typ &rot ) { return m3().setRotationX( rot ); }
 	static m3 rotationY( const typ &rot ) { return m3().setRotationY( rot ); }
 	static m3 rotationZ( const typ &rot ) { return m3().setRotationZ( rot ); }
 	static m3 lookDir( const v3& dir, const v3& up ) { return m3().setLookDir( dir, up ); }

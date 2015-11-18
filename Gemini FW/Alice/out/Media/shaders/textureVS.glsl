@@ -2,6 +2,7 @@
 
 in vec3 vertexPosition;
 in vec2 vertexTexCoords;
+in vec3 vertexNorm;
 
 out vec2 vertexTexCoordsOut;
 

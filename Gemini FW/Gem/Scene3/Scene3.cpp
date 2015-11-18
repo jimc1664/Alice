@@ -109,21 +109,23 @@ Mesh::~Mesh() {
 
 void Cmpnt::Camera::setCam(Dis::DrawList & dl, Prm &p ) {
 	auto &off = p.get<Offset>();
-	dl.View *= mat3x4f::view(off.Pos, off.Rot.as<mat3f>());
-
-	auto m = mat4f::camLookAt(off.Pos, vec3f(0, 0, 0), vec3f(0, 1, 0) );
+	auto m2 = mat3x4f::view(off.Pos, off.Rot.as<mat3f>());
+	//dl.View *= mat3x4f::view(off.Pos, off.Rot.as<mat3f>());
+	
+	auto m = mat3x4f::camLookDir(off.Pos, vec3f(0, 0, 1)* off.Rot.as<mat3f>() , vec3f(0, 1, 0)* off.Rot.as<mat3f>() );
+	dl.View = m2;
 }
 
 #include <Gem/Scene3/TestObj.h>
 
 void Cmpnt::TestCmp::addTo(Dis::DrawList & dl, Prm &p) {
 	auto &off = p.get<Offset>();
-	dl.add<Dis::DrawTestCube>( mat3x4f::transform(off.Pos,off.Rot.as<mat3f>(), Scale ), *Tex ); //todo == vec3f::one()
+	dl.add<Dis::DrawTestCube>( mat3x4f::transform(off.Pos,off.Rot.as<mat3f>(), Scale ) *dl.View, *Tex, *Prog ); //todo == vec3f::one()
 }
 
 void Cmpnt::TestCmp::onUpdate( UpdateCntx &cntx, Prm &p) {
 	auto &off = p.get<Offset>();
-	off.Rot *= quatF::yRotation(cntx.Delta *0.1f);
+	//off.Rot *= quatF::yRotation(cntx.Delta *0.1f);
 	//Pos += 0.1f;
 }
 #include <Gem/Scene3/Passive.h>
@@ -131,9 +133,6 @@ void Cmpnt::TestCmp::onUpdate( UpdateCntx &cntx, Prm &p) {
 void Cmpnt::PassiveInst::addTo(Dis::DrawList & dl, Prm &p) {
 	auto &off = p.get<Offset>();
 	auto w = mat3x4f::transform(off.Pos, off.Rot.as<mat3f>(), Scale);
-	auto v = dl.View;
-	auto wv = w*v;
-
 	dl.add<Dis::DrawPassive>( mat3x4f::transform(off.Pos,off.Rot.as<mat3f>(), Scale ) *dl.View, *Dat ); //todo == vec3f::one()
 }
 

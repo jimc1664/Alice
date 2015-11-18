@@ -13,6 +13,7 @@ namespace Scene3 { namespace Cmpnt { class TestObj; } class Texture; class Passi
 	
 namespace Dis {
 
+class ShaderProg;
 struct RenderingCntx;
 
 class DrawMsg : public msgQNode<DrawMsg> {
@@ -59,12 +60,13 @@ public:
 
 class DrawTestCube : public DrawMsg_T<DrawTestCube>  {
 friend class msgQ<DrawMsg>;
-	DrawTestCube( const mat3x4f &m, Scene3::Texture &t ) : Trans(m), Tex(t) {}
+	DrawTestCube( const mat3x4f &m, Scene3::Texture &t, Dis::ShaderProg &p ) : Trans(m), Tex(t), Prog(p) {}
 friend class DrawMsg_TSpec;
 	void proc(RenderingCntx &rc);
 public:
 	mat3x4f Trans;
 	Scene3::Texture &Tex;
+	Dis::ShaderProg &Prog;
 };
 
 

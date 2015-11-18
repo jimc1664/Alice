@@ -108,8 +108,37 @@ public:
 	static mat view( const v3& eye, const m3& rot ) {
 		mat m;
 
+		m._30   = -rot.row[0] .dot(eye);
+		m._31   = -rot.row[1].dot(eye);
+		m._32   = -rot.row[2].dot(eye);
 		m.Rot = rot.getTranspose();
-		m.Pos = eye*rot;
+	//	m.Pos = -eye*rot;  ??
+
+		return m;
+	}	
+	static mat camLookDir(  const v3& eye, const v3& dir, const v3& up ) {
+		mat m;
+
+		const v3& zAxis(dir);
+		const v3 xAxis(up.cross(zAxis));
+		const v3 yAxis(zAxis.cross(xAxis));
+
+		m._00   = xAxis.x;
+		m._01   = yAxis.x;
+		m._02   = zAxis.x;
+
+		m._10   = xAxis.y;
+		m._11   = yAxis.y;
+		m._12   = zAxis.y;
+
+		m._20   = xAxis.z;
+		m._21   = yAxis.z;
+		m._22   = zAxis.z;
+
+		m._30   = -xAxis.dot(eye);
+		m._31   = -yAxis.dot(eye);
+		m._32   = -zAxis.dot(eye);
+
 		return m;
 	}
 	static mat transform( const v3 &p, const m3 &r, const v3 &s ) { mat m; m.setTransformation(p,r,s); return m; }

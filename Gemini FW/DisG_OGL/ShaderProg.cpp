@@ -44,6 +44,7 @@ void ShaderProg::fromFile( DisMain &dm, const CStr &vs, const CStr &ps) {
 	glBindAttribLocation(Prog, 0, "vertexPosition");
 	glBindAttribLocation(Prog, 1, "vertexColour");
 	glBindAttribLocation(Prog, 2, "vertexTexCoords");
+	glBindAttribLocation(Prog, 3, "vertexNorm");
 
 
 	glLinkProgram(Prog);
@@ -52,6 +53,10 @@ void ShaderProg::fromFile( DisMain &dm, const CStr &vs, const CStr &ps) {
 	GLint tex0Location = glGetUniformLocation(Prog, "texture0");
 	glUniform1i(tex0Location, 0 );
 
+	int loc = glGetAttribLocation( Prog, "vertexPosition");
+	loc = glGetAttribLocation( Prog, "vertexColour");
+	loc = glGetAttribLocation( Prog, "vertexTexCoords");
+	loc = glGetAttribLocation( Prog, "vertexNorm");
 	//now we can delete the VS & FS Programs
 //	glDeleteShader(vertexShaderProgram);
 //	glDeleteShader(fragmentShaderProgram);
