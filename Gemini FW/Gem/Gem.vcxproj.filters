@@ -57,6 +57,9 @@
     <Filter Include="Header Files\inc\Resource">
       <UniqueIdentifier>{8773f6ab-f112-46ac-b64c-537236724766}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Simplex">
+      <UniqueIdentifier>{1932714c-4e74-4725-b685-9cd0848485df}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -248,6 +251,9 @@
     <ClInclude Include="..\..\inc\Gem\Math\Randomizer.h">
       <Filter>Header Files\inc\Math</Filter>
     </ClInclude>
+    <ClInclude Include="..\procedural\simplexnoise.h">
+      <Filter>Simplex</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Gem_Main.cpp">
@@ -270,6 +276,9 @@
     </ClCompile>
     <ClCompile Include="Scene3\Scene3.cpp">
       <Filter>Source Files\Scene3</Filter>
+    </ClCompile>
+    <ClCompile Include="..\procedural\simplexnoise.cpp">
+      <Filter>Simplex</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

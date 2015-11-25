@@ -42,6 +42,7 @@ void ShaderProg::fromFile( DisMain &dm, const CStr &vs, const CStr &ps) {
 
 	//Link attributes
 	glBindAttribLocation(Prog, 0, "vertexPosition");
+	glBindAttribLocation(Prog, 4, "vertexPosition2");
 	glBindAttribLocation(Prog, 1, "vertexColour");
 	glBindAttribLocation(Prog, 2, "vertexTexCoords");
 	glBindAttribLocation(Prog, 3, "vertexNorm");

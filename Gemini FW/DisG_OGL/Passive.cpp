@@ -20,7 +20,7 @@
 
 void DrawPassive::proc(RenderingCntx &rc) {
 //	return;
-	auto projMatrix = mat4f::projection(70.0f * DEG_TO_RAD, 1024.0f/768.0f,0.1f, 100.0f);  //perspective(45.0f, 640.0f / 480.0f, 0.1f, 100.0f);
+	auto projMatrix = mat4f::projection(45.0f * DEG_TO_RAD, 1024.0f/768.0f,0.001f, 100.0f);  //perspective(45.0f, 640.0f / 480.0f, 0.1f, 100.0f);
 	auto mvp = Trans.as<mat4f>()*projMatrix;// *worldMatrix;
 	Dat.Prog.apply(rc, mvp);
 

@@ -105,7 +105,7 @@ void OGlMain::_shutdown() {
 	Shutdown = true;
 
 
-	for (;!Outputs.empty(); ) {
+	for (;!Outputs.isEmpty(); ) {
 		auto o = Outputs.pop();
 		 
 		o->dropCameras( *this );

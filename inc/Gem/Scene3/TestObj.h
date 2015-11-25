@@ -27,17 +27,17 @@ public:
 
 	vec3f Scale;
 	Dis::ShaderProg *Prog;
-	Texture *Tex;
+	Texture *Tex; //todo ref wrapper
 private:
 };
 
 }
 class TestObj : public  S3_T<Cmpnt::TestCmp> {
 public:
-	TestObj(Texture* tex, Dis::ShaderProg *prg, const vec3f &p, const quatF &r = quatF::identity(), const vec3f &s = vec3f(1.0f, 1.0f, 1.0f))  { 
+	TestObj(Texture& tex, Dis::ShaderProg &prg, const vec3f &p, const quatF &r = quatF::identity(), const vec3f &s = vec3f(1.0f, 1.0f, 1.0f))  { 
 		Pos = p; Rot = r; 
-		Tex = tex; Scale = s;
-		Prog = prg;
+		Tex = &tex; Scale = s;
+		Prog = &prg;
 	}
 };
 

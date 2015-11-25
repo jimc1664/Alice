@@ -101,12 +101,12 @@ s32 WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR lpCmdLine,
 	 
 
 	DuctTape::activateForModule();
-#ifdef DEBUG
+//#ifdef DEBUG
  	WinG::initConsole();
-#endif 
+//#endif 
 	//CreateNamedPipe()
 	{	
-
+		
 		HCURSOR Cursors[16];
 		Cursors[0] = LoadCursor(NULL, IDC_ARROW); 
 		Cursors[1] = LoadCursor(NULL, IDC_IBEAM);    
@@ -187,10 +187,11 @@ s64 Time::Current() {
 }
 
 namespace Gem { 
+#ifdef DEBUG 
 void debugBreak() {
 	DebugBreak();
 }
-
+#endif
 
 namespace _Internal { 
 	 

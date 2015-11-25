@@ -335,6 +335,9 @@ struct FindFailedErr : public BasicErr { FindFailedErr( const char *const &str )
 #define Assume(Expression)     ((void)0)
 #define AssumeB(Expression)     ((void)0)
 
+inline void debugBreak() {}
+
+
 #else
 /*
 #ifdef  __cplusplus

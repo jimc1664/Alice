@@ -63,17 +63,20 @@ void Mesh::fromFile( DisMain &dm, const CStr &s) {
 	MeshData md;
 	if( loadFBXFromFile( s, &md ) ) {
 		clearError();
+		checkError();
+#ifdef DEBUG //todo...  real reporting..
 		printf("load mesh %s \n", s.str());
+#endif 
 		glGenVertexArrays(1, &VA);
 		glBindVertexArray(VA);
 
 		glGenBuffers(1, &VB);
 		glBindBuffer(GL_ARRAY_BUFFER, VB);
-
+		checkError();
 		//char *d = new char[md.getNumVerts()*sizeof(Vertex)];
 
 		//memcpy(d, &md.vertices[0], md.getNumVerts()*sizeof(Vertex));
-				int err = glGetError();
+		int err = glGetError();
 		auto es = glewGetErrorString( err );
 		checkError();
 		int a = md.getNumVerts()*sizeof(Vertex), b = sizeof(Vertex), c = md.getNumVerts();

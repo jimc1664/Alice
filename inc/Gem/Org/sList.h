@@ -60,7 +60,7 @@ public:
 	iter end() { return iter(null); }
 
 
-	bool empty() const { return Root == null; }
+	bool isEmpty() const { return Root == null; }
 private:
 	Node *Root; 
 };

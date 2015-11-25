@@ -27,6 +27,25 @@ bool key(  Keycode key ) {
 using namespace JUI;
 
 
+void Toggle::proc(JUI_Main &cntx) {
+	if( LKey != cntx.key(Key) ) {
+		LKey = cntx.key(Key);
+		if(!LKey) Value = !Value;
+	}
+}
+
+void Toggle::deactivate() {	
+	TaskSchedule(JUI_Main, {
+		cntx.Coroutines.detach(this);
+	} );
+}
+
+void Toggle::activate() {
+	TaskSchedule(JUI_Main, {
+		cntx.Coroutines.add(this);
+	} );
+}
+
 
 template< int Dim> void Axis_T<Dim>::deactivate() {	
 	TaskSchedule(JUI_Main, {
@@ -35,11 +54,9 @@ template< int Dim> void Axis_T<Dim>::deactivate() {
 }
 
 template< int Dim> void Axis_T<Dim>::activate() {
-
 	TaskSchedule(JUI_Main, {
 		cntx.Coroutines.add(this);
 	} );
-
 }
 
 template< int Dim> void Axis_T<Dim>::proc(JUI_Main &cntx) {
@@ -53,6 +70,8 @@ template< int Dim> void Axis_T<Dim>::proc(JUI_Main &cntx) {
 		Value[i] += (des - Value[i])*min( cntx.DeltaTime*8.0f, 1.0f);
 	}
 }
+
+
 
 Template1 void _foo2( T &a ) {
 	a.activate(); a.deactivate();

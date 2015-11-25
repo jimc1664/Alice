@@ -257,9 +257,9 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Test_release|Win32'">
     <OutDir>$(SolutionDir)$(Configuration)\</OutDir>
-    <TargetName>GemFW_Gem_t</TargetName>
+    <TargetName>GemFW_Gem_x86_t</TargetName>
     <TargetExt>.lib</TargetExt>
-    <IncludePath>../../inc;$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
+    <IncludePath>../../inc/;$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Test_release|x64'">
     <TargetName>GemFW_Gem_t</TargetName>
@@ -514,6 +514,7 @@
     <ClInclude Include="..\..\inc\Gem\String\WStr.h" />
     <ClInclude Include="..\Config_Glob.h" />
     <ClInclude Include="..\JUI\JUI_Main.h" />
+    <ClInclude Include="..\procedural\simplexnoise.h" />
     <ClInclude Include="Common_Internal.h" />
     <ClInclude Include="Main_internal.h" />
     <ClInclude Include="stdafx.h" />
@@ -521,6 +522,7 @@
   <ItemGroup>
     <ClCompile Include="..\Dis\Dis_Main.cpp" />
     <ClCompile Include="..\JUI\JUI.cpp" />
+    <ClCompile Include="..\procedural\simplexnoise.cpp" />
     <ClCompile Include="Gem_Main.cpp" />
     <ClCompile Include="MainWindow.cpp" />
     <ClCompile Include="Scene2\Scene2.cpp" />

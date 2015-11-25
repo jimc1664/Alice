@@ -168,8 +168,8 @@ Template1 vec4_T<T> operator*( const vec4_T<T> &a, const mat4_T<T> &b ) {
 	return v;
 }
 
-Template1 mat4_T<T> operator+( const mat4_T<T> &a, const vec3_T<T> &b ) { auto ret = a; ret.translation()+=b; return ret; }
-Template1 mat4_T<T> operator-( const mat4_T<T> &a, const vec3_T<T> &b ) { auto ret = a; ret.translation()-=b; return ret; }
+//Template1 mat4_T<T> operator+( const mat4_T<T> &a, const vec3_T<T> &b ) { auto ret = a; ret.translation()+=b; return ret; }
+//Template1 mat4_T<T> operator-( const mat4_T<T> &a, const vec3_T<T> &b ) { auto ret = a; ret.translation()-=b; return ret; }
 
 Template2 mat4_T<T>& operator*=( mat4_T<T> &a, const T2 &b ) { a = a*b; return a; }
 

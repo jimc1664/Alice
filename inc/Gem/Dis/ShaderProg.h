@@ -16,14 +16,14 @@ public:
 	ShaderProg(  );
 
 	static ShaderProg* fromFile(const CStr &vs, const CStr &ps );  //temporary
+	static ShaderProg* prep(const CStr &vs, const CStr &ps) { return fromFile(vs, ps); }
 
 	void fromFile(DisMain &dm, const CStr &vs, const CStr &ps );
 
 	void apply(RenderingCntx &rc, const mat4f &mvp );
 
-protected:
 
-private:
+//private:
 	Dis_Dat( GLuint, u32, Prog );
 
 };

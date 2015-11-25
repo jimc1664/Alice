@@ -265,7 +265,7 @@ void Texture::gen(DisMain &dm, ptr imageBuffer, u32 width, u32 height, u32 intFo
 	checkError();
 	//glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-	glBindTexture(GL_TEXTURE_2D, TexID);
+	glBindTexture(GL_TEXTURE_2D, 0);
 }
 
 

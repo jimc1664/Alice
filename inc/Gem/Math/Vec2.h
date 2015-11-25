@@ -62,7 +62,7 @@ public:
 };
 
 Template1 vec2_T<T>	floor(const vec2_T<T> &i)											{ return vec2_T<T>(floor(i.x), floor(i.y)); }
-Template1 vec2_T<T>	ceil(const vec2_T<T> &i)											{ return vec2_T<T>(ceil(i.x), floor(i.y)); }
+Template1 vec2_T<T>	ceil(const vec2_T<T> &i)											{ return vec2_T<T>(ceil(i.x), ceil(i.y)); }
 
 Template1 vec2_T<T>	abs(const vec2_T<T> &i)												{ return vec2_T<T>(abs(i.x), abs(i.y)); }
 Template1 vec2_T<T>	max(const vec2_T<T> &i, const vec2_T<T> &j)							{ return vec2_T<T>(max(i.x, j.x), max(i.y, j.y)); }

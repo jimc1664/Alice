@@ -155,7 +155,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Test_release|Win32'">
     <TargetExt>.lib</TargetExt>
-    <TargetName>GemFW_DisG_OGL_t</TargetName>
+    <TargetName>GemFW_DisG_OGL_x86_t</TargetName>
     <IncludePath>../../inc;$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Test_release|x64'">

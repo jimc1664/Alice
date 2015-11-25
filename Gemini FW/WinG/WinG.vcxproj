@@ -196,7 +196,7 @@
     <TargetName>GemFW_WinG</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Test_release|Win32'">
-    <TargetName>GemFW_WinG_t</TargetName>
+    <TargetName>GemFW_WinG_x86_t</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Test_release|x64'">
     <TargetName>GemFW_WinG_t</TargetName>
@@ -211,7 +211,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Test_release|Win32'">
     <TargetExt>.lib</TargetExt>
     <OutDir>$(SolutionDir)$(Configuration)\</OutDir>
-    <IncludePath>../../inc;$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
+    <IncludePath>../../inc/;$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Test_release|x64'">
     <IncludePath>../../inc;$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>

@@ -1,5 +1,9 @@
 #include "stdafx.h"
 
+#include "Gem/Math/vec3.h"
+vec3f& debugPosition();
+
+
 #include <Gem/Main.h>
 #include <Gem/MainWindow.h>
 #include <Gem/ConCur/Thread.h>
@@ -20,6 +24,7 @@
 #include <Gem/Scene3/Mesh.h>
 #include <Gem/Scene3/Scene.h>
 
+#include <Gem/Resource/Resource.h>
 
 #include <Gem/Dis/RenderState.h>
 #include <Gem/JUI/InputGroup.h>
@@ -29,6 +34,7 @@
 
 #include "Audio.h"
 #include <array> //counter
+
 
 
 typedef Scene2::ScnNode<Scene2::Sprite> Label;
@@ -211,19 +217,23 @@ public:
 
 */
 
+
+class Game *Gm;
+
+
 class Game  {
 public:
 	Game() : 
 		CntrTex( CSTR("Media//ui//counter.png") ),
-		StdShdr( Dis::ShaderProg::fromFile( CSTR("Media//shaders//textureVS.glsl"), CSTR("Media//shaders//textureFS.glsl") ) ),
-		PlanetShdr( Dis::ShaderProg::fromFile( CSTR("Media//shaders//planetVS.glsl"), CSTR("Media//shaders//planetFS.glsl") ) ),
+		StdShdr( CSTR("Media//shaders//textureVS.glsl"), CSTR("Media//shaders//textureFS.glsl") ),
+		PlanetShdr( CSTR("Media//shaders//planetVS.glsl"), CSTR("Media//shaders//planetFS.glsl")  ),
 		Tex1( CSTR("Media//armoredrecon_diff.png") ),
 		Tex2( CSTR("Media//Tank1DF.png") ),
 		NoiseTex( CSTR("Media//magic clouds.png") ),
 		Mesh1( CSTR("Media//armoredrecon.fbx") ),
 		Mesh2( CSTR("Media//Tank1.FBX") ),
-		Car( Mesh1, Tex1, *StdShdr ),
-		Tank( Mesh2, Tex2, *StdShdr ),
+		Car( Mesh1, Tex1, StdShdr ),
+		Tank( Mesh2, Tex2, StdShdr ),
 		Cntr( CntrTex, vec2f(900,50), 0.4f, 0 )
 	{
 
@@ -232,6 +242,12 @@ public:
 		Mvmnt.Key[2] = 'S';
 		Mvmnt.Key[3] = 'W';
 		MoveObj = 0;
+
+		Gm = this;
+		for( int i = 12; i--; ) {
+			DebugToggles[i].Key = 0x70+i;
+			DebugToggles[i].activate();
+		}
 	}
 
 	void loop( volatile bool &shutdown, Dis::BufferedDrawList &bdl ) {
@@ -260,12 +276,12 @@ public:
 
 
 		//Scene3::ScnNode<Scene3::Camera>* cam = Scene.add(new Scene3::ScnNode<Scene3::Camera>( vec3f(0,0,0) );
-		MoveObj = Scene.add( new Scene3::TestObj( &NoiseTex, PlanetShdr, vec3f(0,0,0) ) );
-		MoveObj = Scene.add( new Scene3::PassiveObj( Car, vec3f(0,10,20) ) );
+		MoveObj = Scene.add( new Scene3::TestObj( NoiseTex, PlanetShdr, vec3f(0,0,0) ) );
+		auto car = MoveObj = Scene.add( new Scene3::PassiveObj( Car, debugPosition() = vec3f(0,10,20) ) );
 	//	Scene.add( new Scene3::PassiveObj( Tank, vec3f(7,0,-3), quatF::identity(), vec3f(1,1,1)*1.25f ) );
 	//	Scene.add( new Scene3::PassiveObj( Tank, vec3f(-7,0,-3), quatF::identity(), vec3f(1,1,1)*0.75f ) );
 
-		auto cam = Scene.add( new Scene3::CameraObj( vec3f(0,5,-20.0f) ) );
+		auto cam = Scene.add( new Scene3::CameraObj( vec3f(0,5,-30.0f) ) );
 		
 		Mvmnt.activate();
 		MoveObj = cam;
@@ -285,11 +301,16 @@ public:
 			
 			Scene.update(deltaTime);
 
+			car->Pos =  debugPosition();
+			//		printf("p  %f %f %f \n", car->Pos.x, car->Pos.y, car->Pos.z);
 			if( MoveObj ) {
-				float speed = 15.0f  * deltaTime;
+				float speed = 5.0f  * deltaTime;
 				auto a = Mvmnt.value();
+
+				f32 disFromP = max( MoveObj->Pos.leng() -14.95f, 0.1f ); 
+				speed *= disFromP /5.0f;
 				MoveObj->Pos += vec3f(a.x,0,a.y)*speed  * MoveObj->Rot.as<mat3f>() ;
-		//		printf("p  %f %f %f \n", MoveObj->Pos.x, MoveObj->Pos.y, MoveObj->Pos.z);
+				//printf("p  %f %f %f \n", MoveObj->Pos.x, MoveObj->Pos.y, MoveObj->Pos.z);
 
 				//todo mouse drag object
 				if( JUI::key(JUI::Keycode::LMouse) ) {
@@ -332,7 +353,7 @@ public:
 		//Scene.clear();
 	}
 
-	Dis::ShaderProg *StdShdr, *PlanetShdr;
+	Res_From_T<Dis::ShaderProg, DStr, DStr > StdShdr, PlanetShdr;
 
 	Scene2::Texture CntrTex;
 	
@@ -341,12 +362,21 @@ public:
 	Scene3::Mesh Mesh1, Mesh2;
 	Scene3::Passive Tank, Car;
 
+	//Res_FromFile<Scene3::Texture> Tex1, Tex2, NoiseTex;
+
 	Counter Cntr;
 	
 	JUI::AxisDual Mvmnt;
 	Scene3::Cmpnt::Offset *MoveObj;
-};
 
+	
+
+	JUI::Toggle DebugToggles[12];
+
+};
+bool debugFlag( const u32 &i ) {
+	return Gm->DebugToggles[i].Value;
+}
 
 class Main { 
 friend class Gem::Main_Hlpr;
@@ -365,6 +395,7 @@ friend class Gem::Main_Hlpr;
 		Shutdown = false;
 		Audio::initOAL();
 
+
 		Game game;
 		for(;!Shutdown;) {		
 			game.loop( Shutdown, Wndw.DrawL );						
@@ -379,8 +410,6 @@ friend class Gem::Main_Hlpr;
 	AutoCtor( MainWindow, Wndw,	( "Alice", vec2u16(1024,768), OS::Window::Flg_Resizeable ) );
 
 //	Scene2::Camera Cam;
-
-
 
 	Thread MainThread;
 	volatile bool Shutdown;

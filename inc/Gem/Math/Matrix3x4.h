@@ -80,6 +80,12 @@ public:
 	}
 	mat& operator*=(const mat &b )  { *this = *this *b; return *this; }
 
+
+	
+	///v3 operator* ( const v3 &a ) { return  v = a *Rot + Pos; }
+
+
+
 	mat& setTransformation( const v3 &p, const m3 &r, const v3 &s ) {
 		 
 		Rot = r *m3::scale(s);
@@ -101,7 +107,10 @@ public:
 	Template1A T1A as() const { return convert<T1A,T>( *(this) ); }
 	template<> mat4_T<typ> as() const { return mat4_T<typ>( *this ); } 
 	
-
+	mat& invert()  { 
+		return (*this = view(Pos, Rot)); 
+	}
+	mat inverse() const { return mat(*this).invert(); }
 
 	//matrix builders
 	static mat identity() { return mat().setIdentity(); }
