@@ -333,6 +333,7 @@
     <ClCompile Include="MainTarget.cpp" />
     <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="Passive.cpp" />
+    <ClCompile Include="Planet.cpp" />
     <ClCompile Include="RenderState.cpp" />
     <ClCompile Include="RenderTarget.cpp" />
     <ClCompile Include="ShaderProg.cpp" />

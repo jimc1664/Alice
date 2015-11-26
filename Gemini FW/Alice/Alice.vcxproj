@@ -171,6 +171,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Test_release|Win32'">
     <IncludePath>../../inc;$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
     <LibraryPath>$(SolutionDir)$(Configuration);$(SolutionDir)lib/;$(VC_LibraryPath_x86);$(WindowsSDK_LibraryPath_x86)</LibraryPath>
+    <TargetName>$(ProjectName)2</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Test_release|x64'">
     <IncludePath>../../inc;$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>

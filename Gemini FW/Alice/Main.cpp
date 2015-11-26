@@ -23,6 +23,7 @@ vec3f& debugPosition();
 #include <Gem/Scene3/Texture.h>
 #include <Gem/Scene3/Mesh.h>
 #include <Gem/Scene3/Scene.h>
+#include <Gem/Scene3/Planet.h>
 
 #include <Gem/Resource/Resource.h>
 
@@ -276,8 +277,9 @@ public:
 
 
 		//Scene3::ScnNode<Scene3::Camera>* cam = Scene.add(new Scene3::ScnNode<Scene3::Camera>( vec3f(0,0,0) );
-		MoveObj = Scene.add( new Scene3::TestObj( NoiseTex, PlanetShdr, vec3f(0,0,0) ) );
-		auto car = MoveObj = Scene.add( new Scene3::PassiveObj( Car, debugPosition() = vec3f(0,10,20) ) );
+		MoveObj = Scene.add(new Scene3::PlanetObj(NoiseTex, PlanetShdr, vec3f(0, 0, 0)));
+		//MoveObj = Scene.add(new Scene3::TestObj(NoiseTex, PlanetShdr, vec3f(0, 0, 0)));
+		auto car = MoveObj = Scene.add(new Scene3::PassiveObj(Car, debugPosition() = vec3f(0, 10, 20)));
 	//	Scene.add( new Scene3::PassiveObj( Tank, vec3f(7,0,-3), quatF::identity(), vec3f(1,1,1)*1.25f ) );
 	//	Scene.add( new Scene3::PassiveObj( Tank, vec3f(-7,0,-3), quatF::identity(), vec3f(1,1,1)*0.75f ) );
 

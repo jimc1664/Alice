@@ -147,3 +147,15 @@ Passive::~Passive() {
 }
 
 
+#include <Gem/Scene3/Planet.h>
+
+void Cmpnt::PlanetCmp::addTo(Dis::DrawList & dl, Prm &p) {
+	auto &off = p.get<Offset>();
+	dl.add<Dis::DrawPlanet>(mat3x4f::transform(off.Pos, off.Rot.as<mat3f>(), Scale) *dl.View, *Tex, *Prog); //todo == vec3f::one()
+}
+
+void Cmpnt::PlanetCmp::onUpdate(UpdateCntx &cntx, Prm &p) {
+	auto &off = p.get<Offset>();
+	//off.Rot *= quatF::yRotation(cntx.Delta *0.1f);
+	//Pos += 0.1f;
+}

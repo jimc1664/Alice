@@ -58,10 +58,20 @@ public:
 };
 
 
-class DrawTestCube : public DrawMsg_T<DrawTestCube>  {
-friend class msgQ<DrawMsg>;
-	DrawTestCube( const mat3x4f &m, Scene3::Texture &t, Dis::ShaderProg &p ) : Trans(m), Tex(t), Prog(p) {}
-friend class DrawMsg_TSpec;
+class DrawPlanet : public DrawMsg_T<DrawPlanet> {
+	friend class msgQ<DrawMsg>;
+	DrawPlanet(const mat3x4f &m, Scene3::Texture &t, Dis::ShaderProg &p) : Trans(m), Tex(t), Prog(p) {}
+	friend class DrawMsg_TSpec;
+	void proc(RenderingCntx &rc);
+public:
+	mat3x4f Trans;
+	Scene3::Texture &Tex;
+	Dis::ShaderProg &Prog;
+};
+class DrawTestCube : public DrawMsg_T<DrawTestCube> {
+	friend class msgQ<DrawMsg>;
+	DrawTestCube(const mat3x4f &m, Scene3::Texture &t, Dis::ShaderProg &p) : Trans(m), Tex(t), Prog(p) {}
+	friend class DrawMsg_TSpec;
 	void proc(RenderingCntx &rc);
 public:
 	mat3x4f Trans;

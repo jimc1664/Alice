@@ -502,6 +502,7 @@
     <ClInclude Include="..\..\inc\Gem\Scene3\Camera.h" />
     <ClInclude Include="..\..\inc\Gem\Scene3\Passive.h" />
     <ClInclude Include="..\..\inc\Gem\Scene3\Mesh.h" />
+    <ClInclude Include="..\..\inc\Gem\Scene3\Planet.h" />
     <ClInclude Include="..\..\inc\Gem\Scene3\Scene.h" />
     <ClInclude Include="..\..\inc\Gem\Scene3\TestObj.h" />
     <ClInclude Include="..\..\inc\Gem\Scene3\Texture.h" />
