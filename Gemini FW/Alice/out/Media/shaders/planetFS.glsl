@@ -180,16 +180,9 @@ void main()
 	col *= 0.7+ 0.3*simplex;
 	col *= (0.3+ 0.7*max( dot( nrm, normalize(vec3(0.8,0.5,0.2)) ),0.0) ); 
 	
+	/*
 	float dis = length(CamPos - Pos );
-	
-	
-/*
-	if( dis < LodMod*1.9f ) {
-		vec4 hl = col *vec4(0.3,99.0,0.3,1.0);// *15/dis ;
-		hl.g = min( hl.g,1.0);
-		col = (col+hl)*0.5;
-	} */
-	
+		
 	
 	vec4 hl = col *vec4(0.7,99.0,0.7,1.0);
 	vec4 hl2 = col *vec4(0.7,0.7,99.0,1.0);
@@ -209,7 +202,7 @@ void main()
 	}
 	vec4 hl3  = Col; hl3.r = min( hl3.t,1.0);
 	
-	col *= Col.g;
+	col *= Col.g; */
 	//col *= (vec4(1.0,1.0,1.0,1.0) +Col)*0.5f;
 		
 	//col =  vec4(1.0,1.0,1.0,1.0) * (simplex*0.5 +0.5);	

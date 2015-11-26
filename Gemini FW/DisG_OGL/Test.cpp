@@ -349,7 +349,7 @@ public:
 	void proc(Planet &p, sList<PNode> &drawList, sList<PNode> &procList, const vec3f &camPos);
 
 	void clearSubNodes() { //todo - not straight clear, cache for awhile
-		for( int i = 16; i--; ) {
+		for( int i = 4; i--; ) {
 			auto &n = SubNodes[i].N;
 			if(!n) continue;
 			n->clearSubNodes();
@@ -376,7 +376,7 @@ public:
 		AABB BB;
 	//	float LodD;
 	};
-	SubNode SubNodes[16];
+	SubNode SubNodes[4];
 };
 
 class Planet {
@@ -404,14 +404,14 @@ ary<Vertex2> verts;
 void PNode::init( Planet &p, const u32 &tl, const u32 &s, const u32 &x1, const u32 &y1, const f32 &ld ) {
 	Tl = tl; Stride = s; X1 = x1;  Y1 = y1; LodDis = ld;
 	Lod = 0;
-	for( int x = 4; x--; )
-	for( int y = 4; y--; ) {
-		auto &sn = SubNodes[x+y*4];
-		sn.Mid = p.Pd[tl+  Stride*p.Dim/8 +  x*Stride*p.Dim/4 +   (Stride*p.Dim/8 +  y*Stride*p.Dim/4)*p.Res1].Pos;
+	for( int x = 2; x--; )
+	for( int y = 2; y--; ) {
+		auto &sn = SubNodes[x+y*2];
+		sn.Mid = p.Pd[tl+  Stride*p.Dim/4 +  x*Stride*p.Dim/2 +   (Stride*p.Dim/4 +  y*Stride*p.Dim/2)*p.Res1].Pos;
 		sn.N = 0;
 		for( int cx = 2; cx--; )
 		for( int cy = 2; cy--; ) {
-			sn.BB.envelop(p.Pd[tl+(cx+x) * Stride*p.Dim/4 + ((cy+ y)*Stride*p.Dim/4)*p.Res1].Pos);
+			sn.BB.envelop(p.Pd[tl+(cx+x) * Stride*p.Dim/2 + ((cy+ y)*Stride*p.Dim/2)*p.Res1].Pos);
 		}
 		sn.BB.envelop(sn.Mid);
 
@@ -441,45 +441,43 @@ void PNode::proc( Planet &p, sList<PNode> &drawList, sList<PNode> &procList, con
 		} */
 
 		//*
-		for( int i = 16; i--; ) {
+		for( int i = 4; i--; ) {
 			auto &sn = SubNodes[i];
 			f32 dis = sn.BB.pntSqrDis(camPos);
 			if( dis  < pow2(LodDis) ) {
 				sub = true;				
 				if( sn.N == null ) {
 					auto& n = *(sn.N = new PNode());
-					u32 y = i /4, x = i - y*4;
-					u32 x1 = X1 + x*Stride*p.Dim/4, y1 = Y1 + y*Stride*p.Dim/4;
-					n.init(p, Tl  + x*Stride*p.Dim/4 + (y*Stride*p.Dim/4)*p.Res1, Stride/4, x1, y1, LodDis*0.25f );
-					n.Level = Level + 2;
-
+					u32 y = i >>1, x = i &1;
+					u32 x1 = X1 + x*Stride*p.Dim/2, y1 = Y1 + y*Stride*p.Dim/2;
+					n.init(p, Tl  + x*Stride*p.Dim/2 + (y*Stride*p.Dim/2)*p.Res1, Stride/2, x1, y1, LodDis*0.5f );
+					n.Level = Level + 1;
 				} 	
-				if( dis <  pow2(LodDis*0.5f) ) {
+				//if( dis <  pow2(LodDis*0.5f) ) {
 					sn.N->DesLod = lod1;
 					procList.add(sn.N);
-				} else
-					sn.N->DesLod = lod2; 
+				//} else
+				//	sn.N->DesLod = lod2; 
 
 			} else if( sn.N ) 
-				sn.N->DesLod = lod3; 
+				sn.N->DesLod = lod2; 
 		} //*/
 	}
 	if(sub) {
 		clearBuffers();
 
-		for( u32 i =16; i--; ) { 
+		for( u32 i =4; i--; ) { 
 			auto &sn = SubNodes[i];
 
 			if( sn.N == null ) {
 				auto& n = *(sn.N = new PNode());
-				u32 y = i /4, x = i - y*4;
-				u32 x1 = X1 + x*Stride*p.Dim/4, y1 = Y1 + y*Stride*p.Dim/4;
-				n.init(p, Tl  + x*Stride*p.Dim/4 + (y*Stride*p.Dim/4)*p.Res1, Stride/4, x1, y1, LodDis*0.25f );
-
-				n.Level = Level + 2;
-				n.gen(p, lod3);
-			} else  if( sn.N->DesLod != lod1 ) {
-				
+				u32 y = i >>1, x = i &1;
+				u32 x1 = X1 + x*Stride*p.Dim/2, y1 = Y1 + y*Stride*p.Dim/2;
+				n.init(p, Tl  + x*Stride*p.Dim/2 + (y*Stride*p.Dim/2)*p.Res1, Stride/2, x1, y1, LodDis*0.5f );
+				n.Level = Level + 1;
+				n.gen(p, lod2);
+				drawList.add(&n);
+			} else  if( sn.N->DesLod != lod1 ) {			
 				sn.N->clearSubNodes();
 				sn.N->checkLod(p);
 				drawList.add(sn.N);
@@ -653,7 +651,7 @@ void DrawTestCube::proc(RenderingCntx &rc) {
 			s.Corners[0] = pd[svi+ p.Res*p.Res1].Pos;
 
 			
-			s.init(p, svi, stride, 0, 0, (pd[svi+ p.Res/2 + p.Res/2*p.Res1].Pos- s.Corners[0]).leng()*2.0f );// (pd[svi+ p.Res/2 + p.Res/2*p.Res1].Pos - s.Corners[3]).leng()  );
+			s.init(p, svi, stride, 0, 0, (pd[svi+ p.Res/2 + p.Res/2*p.Res1].Pos- s.Corners[0]).leng()*2.3f );// (pd[svi+ p.Res/2 + p.Res/2*p.Res1].Pos - s.Corners[3]).leng()  );
 			s.DesLod =  dim*dim*6;
 
 
@@ -700,7 +698,7 @@ void DrawTestCube::proc(RenderingCntx &rc) {
 	}
 	if(debugFlag(1)) glDisable(GL_CULL_FACE);
 
-	auto projMatrix = mat4f::projection(90.0f * DEG_TO_RAD, 1024.0f/768.0f,0.001f, 100.0f);  //perspective(45.0f, 640.0f / 480.0f, 0.1f, 100.0f);
+	auto projMatrix = mat4f::projection(45.0f * DEG_TO_RAD, 1024.0f/768.0f,0.001f, 100.0f);  //perspective(45.0f, 640.0f / 480.0f, 0.1f, 100.0f);
 	auto mvp = Trans.as<mat4f>()*projMatrix;// *worldMatrix;
 	Prog.apply(rc, mvp);
 
