@@ -24,6 +24,7 @@ vec3f& debugPosition();
 #include <Gem/Scene3/Mesh.h>
 #include <Gem/Scene3/Scene.h>
 #include <Gem/Scene3/Planet.h>
+#include <Gem/Scene3/Material.h>
 
 #include <Gem/Resource/Resource.h>
 
@@ -230,12 +231,14 @@ public:
 		PlanetShdr( CSTR("Media//shaders//planetVS.glsl"), CSTR("Media//shaders//planetFS.glsl")  ),
 		Tex1( CSTR("Media//armoredrecon_diff.png") ),
 		Tex2( CSTR("Media//Tank1DF.png") ),
-		NoiseTex( CSTR("Media//magic clouds.png") ),
+		NoiseTex( CSTR("Media//checker.png") ),
 		Mesh1( CSTR("Media//armoredrecon.fbx") ),
 		Mesh2( CSTR("Media//Tank1.FBX") ),
-		Car( Mesh1, Tex1, StdShdr ),
-		Tank( Mesh2, Tex2, StdShdr ),
-		Cntr( CntrTex, vec2f(900,50), 0.4f, 0 )
+		CarMat( Tex1, StdShdr),
+		TankMat(Tex2, StdShdr),
+		Car(Mesh1, CarMat),
+		Tank(Mesh2, TankMat),
+		Cntr(CntrTex, vec2f(900, 50), 0.4f, 0)
 	{
 
 		Mvmnt.Key[0] = 'A';
@@ -278,10 +281,10 @@ public:
 
 		//Scene3::ScnNode<Scene3::Camera>* cam = Scene.add(new Scene3::ScnNode<Scene3::Camera>( vec3f(0,0,0) );
 		MoveObj = Scene.add(new Scene3::PlanetObj(NoiseTex, PlanetShdr, vec3f(0, 0, 0)));
-		//MoveObj = Scene.add(new Scene3::TestObj(NoiseTex, PlanetShdr, vec3f(0, 0, 0)));
+		MoveObj = Scene.add(new Scene3::TestObj(NoiseTex, StdShdr, vec3f(0, 0, 0)));
 		auto car = MoveObj = Scene.add(new Scene3::PassiveObj(Car, debugPosition() = vec3f(0, 10, 20)));
-	//	Scene.add( new Scene3::PassiveObj( Tank, vec3f(7,0,-3), quatF::identity(), vec3f(1,1,1)*1.25f ) );
-	//	Scene.add( new Scene3::PassiveObj( Tank, vec3f(-7,0,-3), quatF::identity(), vec3f(1,1,1)*0.75f ) );
+		Scene.add( new Scene3::PassiveObj( Tank, vec3f(7,0,-3), quatF::identity(), vec3f(1,1,1)*1.25f ) );
+		Scene.add( new Scene3::PassiveObj( Tank, vec3f(-7,0,-3), quatF::identity(), vec3f(1,1,1)*0.75f ) );
 
 		auto cam = Scene.add( new Scene3::CameraObj( vec3f(0,5,-30.0f) ) );
 		
@@ -310,7 +313,7 @@ public:
 				auto a = Mvmnt.value();
 
 				f32 disFromP = max( MoveObj->Pos.leng() -14.95f, 0.1f ); 
-				speed *= disFromP /5.0f;
+				//speed *= disFromP /5.0f;
 				MoveObj->Pos += vec3f(a.x,0,a.y)*speed  * MoveObj->Rot.as<mat3f>() ;
 				//printf("p  %f %f %f \n", MoveObj->Pos.x, MoveObj->Pos.y, MoveObj->Pos.z);
 
@@ -361,6 +364,7 @@ public:
 	
 	Scene3::Scene Scene;
 	Scene3::Texture  Tex1, Tex2, NoiseTex;
+	Scene3::Material TankMat, CarMat;// , PlanetMat;
 	Scene3::Mesh Mesh1, Mesh2;
 	Scene3::Passive Tank, Car;
 
@@ -370,8 +374,6 @@ public:
 	
 	JUI::AxisDual Mvmnt;
 	Scene3::Cmpnt::Offset *MoveObj;
-
-	
 
 	JUI::Toggle DebugToggles[12];
 

@@ -2,37 +2,34 @@
 #define GEM_SCENE3_PASSIVE_H
 
 #include "../Basic.h"
-#include "../String/CStr.h"
 
 #include "Scene.h"
 
 
 namespace Gem { 
 
-namespace Dis { class ShaderProg;  }
-	
+
 namespace Scene3 {
 
-class Texture; class Mesh;
+class Material; class Mesh;
 
 class Passive {
 public:
-	Passive( const Passive &o ) : Tex(o.Tex), Mesh(o.Mesh), Prog(o.Prog) {
+	Passive(const Passive &o) : Mat(o.Mat), Mesh(o.Mesh) {
 		//Hdwr = o.Hdwr;
-		Count = 0;
+	//	Count = 0;
 	}
 
-	Passive( Scene3::Mesh &m, Scene3::Texture &t, Dis::ShaderProg &p ) : Mesh(m), Tex(t), Prog(p) {}
+	Passive(Scene3::Mesh &m, Scene3::Material &mt ) : Mesh(m), Mat(mt) {}
 
 	~Passive();
 
 //private:	
 	//Dis::Mesh *Hdwr;
-	Scene3::Texture &Tex;
+	Scene3::Material &Mat;
 	Scene3::Mesh &Mesh;
-	Dis::ShaderProg &Prog;
 
-	int Count;
+	//int Count;
 };
 
 

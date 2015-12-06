@@ -132,6 +132,8 @@ void Cmpnt::TestCmp::onUpdate( UpdateCntx &cntx, Prm &p) {
 
 void Cmpnt::PassiveInst::addTo(Dis::DrawList & dl, Prm &p) {
 	auto &off = p.get<Offset>();
+
+//	Dat->Mat.
 	auto w = mat3x4f::transform(off.Pos, off.Rot.as<mat3f>(), Scale);
 	dl.add<Dis::DrawPassive>( mat3x4f::transform(off.Pos,off.Rot.as<mat3f>(), Scale ) *dl.View, *Dat ); //todo == vec3f::one()
 }

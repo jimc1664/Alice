@@ -257,6 +257,9 @@
     <ClInclude Include="..\..\inc\Gem\Scene3\Planet.h">
       <Filter>Header Files\inc\Scene3</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\inc\Gem\Scene3\Material.h">
+      <Filter>Header Files\inc\Scene3</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Gem_Main.cpp">
