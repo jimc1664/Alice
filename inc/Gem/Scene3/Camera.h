@@ -15,10 +15,11 @@ class Camera : public ScnBaseComponent, public TCmpnt<Camera, Offset> {
 public:
 //	Camera(const vec3f &p, const quatF &r = quatF::identity()) : Pos(p), Rot(r) {}
 //
-	void setCam(Dis::DrawList & dl, Prm &p );
+	void setCam( BuildDrawLCntx & dl, Prm &p );
 //	void update(Scene::UpdateCntx &cntx);
 
-
+	virtual void preBuildDL( Dis::DrawList &dl, Prm &p );   //todo - could wrap round caller too kill a virtual
+	virtual void postBuildDL( Dis::DrawList &dl, Prm &p ); 
 private:	
 	// void render() override;
 //	vec2u16 Size;

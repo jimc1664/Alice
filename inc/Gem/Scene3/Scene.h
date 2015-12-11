@@ -3,6 +3,7 @@
 
 #include "../Basic.h"
 #include "../Org/dList.h"
+#include "../Org/ary.h"
 #include "../Org/TemplateCmpnt.h"
 
 #include "../Math/Vec3.h"
@@ -15,18 +16,69 @@ namespace Dis { class DrawList; }
 	
 namespace Scene3 {
 
-namespace Cmpnt { class Updateable; class Parent; class Camera; }
+namespace Cmpnt { class Updateable; class Renderable; class Parent; class Camera; }
+
+struct BuildDrawLCntx;
 
 class Node_Base : public dListNode<Node_Base> {
 public:
 	Node_Base() : Prnt(0) {}
-	virtual void addObjTo(Dis::DrawList & dl) = 0;
+	virtual void addObjTo( BuildDrawLCntx & dl) = 0;
 	virtual ~Node_Base(){
 		int a = 0;
 	}
 	Cmpnt::Parent *Prnt;
 };
 class NodeGroup : public dList<Node_Base> {
+
+};
+
+class Scene; class Material;
+
+struct BuildDrawLCntx {
+	BuildDrawLCntx( Scene &scn, Dis::DrawList & dl ) : Scn(scn ), Dl(dl), CurCam(0) {}
+
+	Template2 void proc( T &a, T2 &p ) { a.onBuildDl( *this, p ); }
+
+	//void add( Cmpnt::Renderable *
+
+	Dis::DrawList &Dl;
+	Scene &Scn;
+
+	//use of arrays here is temporary...   need threading, sorting, cacheing of references (todo)
+
+	struct MatEntry {
+		MatEntry( Material &m ) : Mat(m) {}
+		Material &Mat;
+		ary<Cmpnt::Renderable*, Ctor::Simple > RL;
+	};
+	struct CamEntry {
+		CamEntry( Cmpnt::Camera &c ) : Cam(c) {}
+		
+		MatEntry& get( Material &mat ) { //todo - likely optimisation hotspot - use cache handles / frame state 
+			for( int i = ML.count(); i--; ) {
+				if( &ML[i].Mat == &mat ) {
+					return ML[i];
+				}
+			}
+			return ML.add( MatEntry(mat) );
+		}
+		void add( Material &mat, Cmpnt::Renderable &r ) {
+			get(mat).RL.add(&r);			
+		}
+		Cmpnt::Camera &Cam;
+		ary<MatEntry> ML;
+	};
+	ary<CamEntry> CL;
+
+	void add( Cmpnt::Camera &cam ) {
+		CurCam = &CL.add( CamEntry(cam) );		
+	}
+
+	CamEntry *CurCam;
+
+	void build();
+private:
 
 };
 
@@ -47,15 +99,21 @@ public:
 
 	template<class Cam> void render( Dis::DrawList & dl, Cam *cam) {
 		//children
-		cam->setCam( dl, cam->prmFor<Cmpnt::Camera>() );
+
+		BuildDrawLCntx cntx(*this, dl);
+		cam->setCam( cntx, cam->prmFor<Cmpnt::Camera>() );
+
 		auto *nd = static_cast<Node_Base*>(cam);
 		if( cam->Prnt == null ) {
 			for( auto it = Root.start(); it != Root.end(); it++ ) {
 				Node_Base * cur = it;
 				if(cur == nd) continue;
-				cur->addObjTo(dl);
+				cur->addObjTo(cntx);
 			}				
 		} else Error("unhandled");
+
+
+		cntx.build();
 	}
 
 
@@ -97,7 +155,8 @@ public:
 	//void update( Scene::UpdateCntx &cntx  ) {}
 	void onAdd( AddCntx &ac, Nothing  ) {}
 	void onUpdate( UpdateCntx &ac, Nothing  ) {}
-	void addTo(Dis::DrawList & dl, Nothing ) {} 
+	void onBuildDl( BuildDrawLCntx &cntx, Nothing ) {} 
+	void addToDl( Dis::DrawList& dl, Nothing ) {} 
 };
 class Parent : public ScnBaseComponent, public NodeGroup, public dListNode<Updateable>, public TCmpnt<Updateable> {
 public:
@@ -112,7 +171,7 @@ public:
 };
 class Renderable : public ScnBaseComponent, public dListNode<Renderable>, public TCmpnt<Renderable> {
 public:
-	//virtual void addTo(Dis::DrawList & dl) =0;
+	virtual void addObjToDl( Dis::DrawList& dl) =0;
 	//virtual ~Renderable() { int a = 0; }
 };
 
@@ -140,7 +199,8 @@ public:
 template<  typename Comp > struct S3_T_Base : public Node_Base, public Comp {
 	void add( AddCntx &cntx ) {  procForAll(cntx); }
 	virtual void updateObj( UpdateCntx &cntx) { procForAll(cntx); }
-	virtual void addObjTo(Dis::DrawList &dl) { procForAll(dl); } 
+	virtual void addObjToDl( Dis::DrawList& dl) { procForAll(dl); }
+	virtual void addObjTo( BuildDrawLCntx &cntx ) { procForAll(cntx); } 
 	virtual ~S3_T_Base() {}
 
 	template<typename SubCmpnt> typename SubCmpnt::Prm prmFor() { return PrmHelper<typename SubCmpnt::Prm>::cast(this); }

@@ -86,7 +86,7 @@ public:
 	DrawList(  ) : View(mat3x4f::identity()){
 
 	}
-	Template2 void proc( T &a, T2 &p ) { a.addTo( *this, p ); }
+	Template2 void proc( T &a, T2 &p ) { a.addToDl( *this, p ); }
 	//void setOutput( RenderTarget& rt );   //todo thread checks..
 //#ifdef DIS_INTERNAL
 	void render(RenderingCntx &rc);

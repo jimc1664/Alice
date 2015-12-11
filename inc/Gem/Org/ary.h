@@ -54,7 +54,7 @@ public:
 //	typedef typename CnType::Sub<Obj> Cn;  //todo --  why dafuq this ain't working no more
 	
 	ary() : Allocated(0), Count(0), Data(0)			{}
-	ary( const ary<Obj> &s )						: Allocated( s.Count ), Count(s.Count), Data( alloc(s.Count) ) { Cn.mulConstruct(Data,Count,s.Data); }
+	ary( const ary<Obj> &s )						: Allocated( s.Count ), Count(s.Count), Data( alloc(s.Count) ) { if(Count) Cn.mulConstruct(Data,Count,s.Data); }
 	ary( const u32 &allocated )								: Allocated(allocated), Count(0), Data( alloc(allocated) )	{}
 	ary( const u32 &allocated, const u32 &count )				: Allocated(allocated), Count(count), Data( alloc(allocated) )	{ Cn.mulConstruct(Data,count); }
 	ary( const u32 &allocated, const u32 &count, const Obj &o )	: Allocated(allocated), Count(count), Data( alloc(allocated) )	{ Cn.mulConstruct(Data,count,o); }
@@ -81,10 +81,10 @@ public:
 		return Data[Count++];
 	}
 	Obj&	add() {
-		int nc = Count + 1;
-		extendIfNeeded( nc ); 
-		Cn.construct( Data[Count] );
-		return Data[Count=nc];
+		int oc = Count; Count++;
+		extendIfNeeded( Count ); 
+		Cn.construct( Data[oc] );
+		return Data[oc];
 	}
 	void	push( const Obj &allocated ) { add(allocated); }
 	u32		pushI( const Obj &allocated ) { u32 r = Count; add(allocated); return r;  }

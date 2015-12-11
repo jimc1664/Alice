@@ -57,7 +57,7 @@
     <Filter Include="Header Files\inc\Resource">
       <UniqueIdentifier>{8773f6ab-f112-46ac-b64c-537236724766}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Simplex">
+    <Filter Include="Source Files\Simplex">
       <UniqueIdentifier>{1932714c-4e74-4725-b685-9cd0848485df}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
@@ -252,9 +252,12 @@
       <Filter>Header Files\inc\Math</Filter>
     </ClInclude>
     <ClInclude Include="..\procedural\simplexnoise.h">
-      <Filter>Simplex</Filter>
+      <Filter>Source Files\Simplex</Filter>
     </ClInclude>
     <ClInclude Include="..\..\inc\Gem\Scene3\Planet.h">
+      <Filter>Header Files\inc\Scene3</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc\Gem\Scene3\Material.h">
       <Filter>Header Files\inc\Scene3</Filter>
     </ClInclude>
   </ItemGroup>
@@ -281,7 +284,7 @@
       <Filter>Source Files\Scene3</Filter>
     </ClCompile>
     <ClCompile Include="..\procedural\simplexnoise.cpp">
-      <Filter>Simplex</Filter>
+      <Filter>Source Files\Simplex</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
