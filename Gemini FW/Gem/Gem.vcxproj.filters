@@ -60,6 +60,9 @@
     <Filter Include="Source Files\Simplex">
       <UniqueIdentifier>{1932714c-4e74-4725-b685-9cd0848485df}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Util">
+      <UniqueIdentifier>{151cbb98-a15d-45d5-ace8-4bd2124b1369}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -260,15 +263,21 @@
     <ClInclude Include="..\..\inc\Gem\Scene3\Material.h">
       <Filter>Header Files\inc\Scene3</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\inc\Gem\ConCur\WorkHost.h">
+      <Filter>Header Files\inc\Concur</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc\Gem\ConCur\RefCounter.h">
+      <Filter>Header Files\inc\Concur</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc\Gem\ConCur\Atomic.h">
+      <Filter>Header Files\inc\Concur</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Gem_Main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="MainWindow.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="String.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\JUI\JUI.cpp">
@@ -285,6 +294,15 @@
     </ClCompile>
     <ClCompile Include="..\procedural\simplexnoise.cpp">
       <Filter>Source Files\Simplex</Filter>
+    </ClCompile>
+    <ClCompile Include="Util\WorkHost.cpp">
+      <Filter>Source Files\Util</Filter>
+    </ClCompile>
+    <ClCompile Include="String.cpp">
+      <Filter>Source Files\Util</Filter>
+    </ClCompile>
+    <ClCompile Include="Util\Resource.cpp">
+      <Filter>Source Files\Util</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

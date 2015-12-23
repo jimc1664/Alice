@@ -1,12 +1,17 @@
 #version 150
 
-out vec4 FragColor;
+#include "commonDefferedFS.glsl"
 
-in vec2 vertexTexCoordsOut;
+
+in vec2 UV;
 
 uniform	sampler2D texture0;
 
-void main()
-{
-  FragColor = texture(texture0,	vertexTexCoordsOut);
+void main() {
+
+	vec4 col = texture(texture0,	UV );
+	vec2 uv = (VPos.xy + 1)*vec2(0.5,0.5);
+	vec4 lightDat = texture(LightBuff, uv );
+	col.rgb = col.rgb * lightDat.rgb + lightDat.rgb *lightDat.a; 
+	FragColor = col;
 }

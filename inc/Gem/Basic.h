@@ -118,6 +118,10 @@ Template1	Clone_Struct<T> Clone(T& a) { return Clone_Struct<T>(a); }
 
 struct NoConstruct {}; struct Identity {};  struct Default { };
 struct Nothing { Nothing(){} Template1 Nothing(T){} };
+struct Reserve {
+	Reserve(const u32 &a) : Amnt(a) {}  
+	const u32 Amnt;
+};
 
 class Uncopyable {
 protected:

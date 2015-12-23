@@ -53,7 +53,10 @@ void Scene::clear() {
 void BuildDrawLCntx::build()  {
 	for( int i = CL.count(); i--; ) {
 		auto &ce = CL[i];
-		ce.Cam.preBuildDL(Dl, ce.Cam.get<Cmpnt::Camera::Prm>());
+
+		ce.Cam.buildDL(*this, ce);
+		/*
+		ce.Cam.preBuildDL(Dl);
 		for( int j = ce.ML.count(); j--; ) {
 			auto &me = ce.ML[j];
 			//Dl.add( mat..
@@ -62,6 +65,7 @@ void BuildDrawLCntx::build()  {
 			}
 		}
 		ce.ML.clear();
+		ce.Cam.postBuildDL(Dl); */
 	}
 		
 }
@@ -69,18 +73,46 @@ void BuildDrawLCntx::build()  {
 #include <Gem/Scene3/Camera.h>
 #include <Gem/Math/Matrix4.h>
 
-
 void Cmpnt::Camera::preBuildDL( Dis::DrawList &dl, Prm &p ) {
-
+	dl.add<Dis::DM_DefferedPrep>();
 }
-void Cmpnt::Camera::postBuildDL( Dis::DrawList &dl, Prm &p ) {
+void Cmpnt::Camera::postBuildDL( Dis::DrawList &dl, Prm &p  ) {
+	auto &off = p.get<Offset>();
+	auto m = mat3x4f::view(off.Pos, off.Rot.as<mat3f>());
+	
+	dl.add<Dis::DM_DefferedFinal>( *this, m );
+}
+void Cmpnt::Camera::buildDL( BuildDrawLCntx &cntx, BuildDrawLCntx::CamEntry &ce , Prm &p  ) {
+	auto &off = p.get<Offset>();
+	auto m = mat3x4f::view(off.Pos, off.Rot.as<mat3f>());
+	
+	cntx.Dl.add<Dis::DM_DefferedPrep>();
+		
+	for( int j = ce.ML.count(); j--; ) {
+		auto &me = ce.ML[j];
+		for( int k = me.RL.count(); k--; ) 
+			me.RL[k]->addObjToDl(cntx.Dl);
+		
+	}
+
+	cntx.Dl.add<Dis::DM_DefferedLightPass>( *this, m );
+
+	for( int j = ce.ML.count(); j--; ) {
+		auto &me = ce.ML[j];
+		for( int k = me.RL.count(); k--; ) 
+			me.RL[k]->addObjToDl(cntx.Dl);
+		
+	}
+	cntx.Dl.add<Dis::DM_DefferedFinal>( *this, m );
+
+	ce.ML.clear();
 
 }
 
 void Cmpnt::Camera::setCam( BuildDrawLCntx& cntx, Prm &p ) {
 	auto &off = p.get<Offset>();
 	auto m2 = mat3x4f::view(off.Pos, off.Rot.as<mat3f>());
-	//dl.View *= mat3x4f::view(off.Pos, off.Rot.as<mat3f>());
+	//dl.View *= mat3x4f::view(off.Pos, off.Rot.as<mat3f>());  //todo -...what was I up to here.. did i finish??
 	
 	auto m = mat3x4f::camLookDir(off.Pos, vec3f(0, 0, 1)* off.Rot.as<mat3f>() , vec3f(0, 1, 0)* off.Rot.as<mat3f>() );
 	cntx.Dl.View = m2;
@@ -175,15 +207,13 @@ void Cmpnt::PassiveInst::onBuildDl( BuildDrawLCntx& cntx, Prm &p) {
 }
 void Cmpnt::PassiveInst::addToDl( Dis::DrawList &dl, Prm &p) {
 	auto &off = p.get<Offset>();
-		
-	//Dat->Mat.getEntry(cntx.CurCam).RL.add(&p.get<Renderable>());
 	auto w = mat3x4f::transform(off.Pos, off.Rot.as<mat3f>(), Scale);
-	dl.add<Dis::DrawPassive>( mat3x4f::transform(off.Pos,off.Rot.as<mat3f>(), Scale ) *dl.View, *Dat ); //todo == vec3f::one()
+	dl.add<Dis::DrawPassive>( mat3x4f::transform(off.Pos,off.Rot.as<mat3f>(), Scale ) *dl.View, *Dat ); 
 }
 
 void Cmpnt::PassiveInst::onUpdate( UpdateCntx &cntx, Prm &p) {
 	auto &off = p.get<Offset>();
-	off.Rot *= quatF::yRotation(cntx.Delta *0.1f);
+//	off.Rot *= quatF::yRotation(cntx.Delta *0.1f);
 	//Pos += 0.1f;
 }
 

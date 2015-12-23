@@ -125,7 +125,7 @@ s32 WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR lpCmdLine,
 		Cursors[14] = LoadCursor(NULL, IDC_APPSTARTING);    
 		Cursors[15] = LoadCursor(NULL, IDC_HELP);    
 
-		SetLastError( 0); //todo .. some cursor not loading in windows 8 ...do't really care at this point
+		SetLastError( 0); //todo .. some cursor not loading in windows 8 ...don't really care at this point
 		
 		// Register class
 		WNDCLASSEX wcex;

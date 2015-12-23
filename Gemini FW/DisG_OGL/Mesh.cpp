@@ -20,9 +20,10 @@
 
 
 struct Vertex {
-  vec3f position;
-  vec4f colour;
-  vec2f texCoords;
+  vec3f Pos;
+//  vec4f colour;
+  vec3f Norm;
+  vec2f UV;
 };
 
 struct MeshData
@@ -88,13 +89,13 @@ void Mesh::fromFile( DisMain &dm, const CStr &s) {
 		glBufferData(GL_ELEMENT_ARRAY_BUFFER, (IC =  md.getNumIndices())*sizeof(int), &md.indices[0], GL_STATIC_DRAW);
 
 		glEnableVertexAttribArray(0);
-		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), NULL);
+		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (ptr)offsetof(Vertex, Pos)  );
 
-		glEnableVertexAttribArray(1);
-		glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void**)(sizeof(vec3f)));
+		glEnableVertexAttribArray(3);
+		glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (ptr)offsetof(Vertex, Norm) );
 
-		glEnableVertexAttribArray(2);
-		glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void**)(sizeof(vec3f) + sizeof(vec4f)));
+		glEnableVertexAttribArray(2);  
+		glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (ptr)offsetof(Vertex, UV) );
 	
 
 		glBindVertexArray(0);
@@ -260,9 +261,9 @@ void processMesh(FbxMesh * mesh, MeshData *meshData) {
 	for (int i = 0; i < numVerts; i++)
 	{
 		FbxVector4 currentVert = mesh->GetControlPointAt(i);
-		pVerts[i].position = vec3f( (f32)currentVert[0], (f32)currentVert[1], (f32)currentVert[2]);
-		pVerts[i].colour= vec4f(1.0f, 1.0f, 1.0f, 1.0f);
-		pVerts[i].texCoords = vec2f(0.0f, 0.0f);
+		pVerts[i].Pos = vec3f( (f32)currentVert[0], (f32)currentVert[1], (f32)currentVert[2]);
+		//pVerts[i].colour= vec4f(1.0f, 1.0f, 1.0f, 1.0f);
+		//pVerts[i].texCoords = vec2f(0.0f, 0.0f);
 	}
 
 	processMeshTextureCoords(mesh, pVerts, numVerts);
@@ -293,7 +294,10 @@ void processMeshTextureCoords(FbxMesh * mesh, Vertex * verts, int numVerts)
 		for (unsigned iPolygonVertex = 0; iPolygonVertex < 3; iPolygonVertex++) {
 			int fbxCornerIndex = mesh->GetPolygonVertex(iPolygon, iPolygonVertex);
 			FbxVector2 fbxUV = FbxVector2(0.0, 0.0);
+
+
 			FbxLayerElementUV* fbxLayerUV = mesh->GetLayer(0)->GetUVs();
+
 			// Get texture coordinate
 			if (fbxLayerUV) {
 				int iUVIndex = 0;
@@ -309,8 +313,14 @@ void processMeshTextureCoords(FbxMesh * mesh, Vertex * verts, int numVerts)
 					break;
 				}
 				fbxUV = fbxLayerUV->GetDirectArray().GetAt(iUVIndex);
-				verts[fbxCornerIndex].texCoords.x = (f32)fbxUV[0];
-				verts[fbxCornerIndex].texCoords.y = 1.0f - (f32)fbxUV[1];
+				verts[fbxCornerIndex].UV.x = (f32)fbxUV[0];
+				verts[fbxCornerIndex].UV.y = 1.0f - (f32)fbxUV[1];
+			}
+
+			//get norms here 
+			FbxVector4 nrm;
+			if( mesh->GetPolygonVertexNormal( iPolygon, iPolygonVertex, nrm ) ) {
+				verts[fbxCornerIndex].Norm = (vec3f)vec3d(nrm[0], nrm[1], nrm[2]);
 			}
 		}
 	}

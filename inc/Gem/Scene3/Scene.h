@@ -151,6 +151,8 @@ struct AddCntx {
 
 namespace Cmpnt {
 class ScnBaseComponent {
+protected:
+	template<class T> struct TopIf {};	
 public:
 	//void update( Scene::UpdateCntx &cntx  ) {}
 	void onAdd( AddCntx &ac, Nothing  ) {}

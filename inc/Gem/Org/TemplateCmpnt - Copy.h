@@ -96,11 +96,9 @@ template<> struct PrmHelper<Nothing> { template<typename In> static Nothing cast
 template<typename Out> struct PrmHelper<Out&> { template<typename In> static Out& cast(In * i) { return *static_cast<Out*>(i); } };
 
 
-template<typename Top, typename Cmpnt > struct TopIFFor : public Cmpnt { };   //this could/should be clear
-
 template< typename Typ1, typename Typ2 = Nothing, typename Typ3 = Nothing, typename Typ4 = Nothing, typename Typ5 = Nothing > struct dpndnC;
 template< typename Typ1> struct dpndnC<Typ1, Nothing, Nothing, Nothing, Nothing> {
-	struct Comp :public TopIFFor<Comp,Typ1> {
+	struct Comp :public Typ1 {
 		Template1 void procForAll( T &cntx ) {
 			cntx.proc(*static_cast<Typ1*>(this), PrmHelper<typename Typ1::Prm>::cast(this));
 		}
@@ -114,10 +112,9 @@ template< typename Typ1> struct dpndnC<Typ1, Nothing, Nothing, Nothing, Nothing>
 		typedef typename T::template Join<Typ1>::R R; 
 	};
 };
-
-
 template< typename Typ1, typename Typ2> struct dpndnC<Typ1, Typ2, Nothing, Nothing, Nothing> {
-	struct Comp : public TopIFFor<Comp,Typ1>, public TopIFFor<Comp,Typ2> {
+	struct Comp :public Typ1, public Typ2 {
+		//void postBuildDL2( Dis::DrawList &dl, typename Typ2::Prm &p) override { }
 		Template1 void procForAll( T &cntx ) {
 			cntx.proc(*static_cast<Typ1*>(this), PrmHelper<typename Typ1::Prm>::cast(this));
 			cntx.proc(*static_cast<Typ2*>(this), PrmHelper<typename Typ2::Prm>::cast(this));	
@@ -136,7 +133,7 @@ template< typename Typ1, typename Typ2> struct dpndnC<Typ1, Typ2, Nothing, Nothi
 };
 
 template< typename Typ1, typename Typ2, typename Typ3> struct dpndnC<Typ1, Typ2, Typ3, Nothing, Nothing> {
-	struct Comp : public TopIFFor<Comp,Typ1>, public TopIFFor<Comp,Typ2>, public TopIFFor<Comp,Typ3> {
+	struct Comp :public Typ1, public Typ2, public Typ3 {
 		Template1 void procForAll( T &cntx ) {
 			cntx.proc(*static_cast<Typ1*>(this), PrmHelper<typename Typ1::Prm>::cast(this) );
 			cntx.proc(*static_cast<Typ2*>(this), PrmHelper<typename Typ2::Prm>::cast(this));	
@@ -156,7 +153,7 @@ template< typename Typ1, typename Typ2, typename Typ3> struct dpndnC<Typ1, Typ2,
 	};
 };
 template< typename Typ1, typename Typ2, typename Typ3, typename Typ4> struct dpndnC<Typ1, Typ2, Typ3, Typ4, Nothing> {
-	struct Comp : public TopIFFor<Comp,Typ1>, public TopIFFor<Comp,Typ2>, public TopIFFor<Comp,Typ3>, public TopIFFor<Comp,Typ4> {
+	struct Comp :public Typ1, public Typ2, public Typ3, public Typ4 {
 		Template1 void procForAll( T &cntx ) {
 			cntx.proc(*static_cast<Typ1*>(this), PrmHelper<typename Typ1::Prm>::cast(this));	
 			cntx.proc(*static_cast<Typ2*>(this), PrmHelper<typename Typ2::Prm>::cast(this));	
@@ -170,23 +167,7 @@ template< typename Typ1, typename Typ2> struct dpndnC_Join {
 	typedef typename Typ2::template JoinTo< Typ1 > ::R R;
 };
 
-/*
-#define Def_TemplateCmpnt_TopIF( cmpnt ) \
-}; \
-template<typename Base> class cmpnt##_TopIF; \
-template<typename Base> struct TopIFFor<Base, cmpnt> : public cmpnt##_TopIF<Base>{};\
-template<typename Base> class cmpnt##_TopIF : public cmpnt { \
-typedef cmpnt CmpntT; 
 
-#define Def_TemplateCmpnt_TopIF__Call_B( ret, name, prms, ... ) \
-	ret name prms  override { return 	CmpntT::name( __VA_ARGS__ PrmHelper<typename CmpntT::Prm>::cast(  static_cast<Base*>(this) ) ); } 
-
-#define Def_TemplateCmpnt_TopIF__Call_A( ret, name,  ... ) \
-public: \
-	virtual ret name( __VA_ARGS__ ) = 0;  \
-protected:  \
-	ret name ( __VA_ARGS__ Prm &p );
-	*/
 
 template< class Base, typename Typ1= Nothing, typename Typ2= Nothing, typename Typ3 = Nothing, typename Typ4 = Nothing, typename Typ5 = Nothing > struct TCmpnt;
 template< class Base> struct TCmpnt<Base, Nothing, Nothing, Nothing, Nothing, Nothing> {

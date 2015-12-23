@@ -170,7 +170,7 @@ void getPlanet(const int &dim, ary<PlanetDat> &verts) {
 	float mxf = 0;
 	for( int i = verts.count(); i--; ) {
 		auto &v = verts[i];
-		v.Norm.normalise();
+		v.Norm = - v.Norm.getNormal();
 		int modI = *(int*)&verts[i].D;
 		float mod;
 		if( modI > avg ) mod = 1.0f - (1.0f-l1)*(float)(modI-avg)/(float)mx;
@@ -549,8 +549,15 @@ void PNode::gen(Planet &p) {
 	for( int y = vw; y--; )
 	for( int x = vw; x--; ) {
 		auto &v = verts[x+y*vw];
-		*(PlanetDat*)&v = p.Pd[Tl+ x*stride + y*stride*p.Res1];
+		auto &pv = p.Pd[Tl+ x*stride + y*stride*p.Res1];
+
+		*(PlanetDat*)&v = pv;
+		v.Norm = -v.Norm;
 		v.Uv = vec2f((f32)(X1+x*stride), (f32)(Y1+y*stride)) /(f32)p.Res;
+		
+		f32 l = pv.Pos.leng();  //fix...  don't have proper way to water yet and doing this in shader messes with dlod
+		if(l < 15.0f)  v.Pos *= 15.0f/l;
+
 		v.Pos2 = v.Pos;
 		v.Col = vec4f(1.0f, 1.0f, 1.0f, 1.0f);
 
@@ -620,12 +627,11 @@ void PNode::gen(Planet &p) {
 
 
 bool debugFlag(const u32 &i);
+extern bool NormalPass;
 
 void DrawPlanet::proc(RenderingCntx &rc) {
-	//	return;
 
 	auto &p = Plnt;
-
 	u32 res = 1024, dim = 16, ic = dim*dim*6;
 
 	if( !Init ) {
@@ -701,11 +707,14 @@ void DrawPlanet::proc(RenderingCntx &rc) {
 
 	auto projMatrix = mat4f::projection(45.0f * DEG_TO_RAD, 1024.0f/768.0f, 0.001f, 100.0f);  //perspective(45.0f, 640.0f / 480.0f, 0.1f, 100.0f);
 	auto mvp = Trans.as<mat4f>()*projMatrix;// *worldMatrix;
-	Prog.apply(rc, mvp);
 
-
-
-	Tex.Hdwr->apply(rc);
+	if( !NormalPass  ) {
+		Prog.apply(rc, mvp, Trans.as<mat4f>());
+	//	Tex.Hdwr->apply(rc);
+	} else {
+		static ShaderProg * nrmShdr = ShaderProg::fromFile(CSTR("Media//shaders//planetVS.glsl"), CSTR("Media//shaders//normalPassFS.glsl"));
+		nrmShdr->apply(rc, mvp, Trans.as<mat4f>());
+	}
 
 	vec3f camPos = vec3f(0, 0, 0)* Trans.inverse();
 

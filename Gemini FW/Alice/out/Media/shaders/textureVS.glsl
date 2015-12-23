@@ -1,15 +1,11 @@
 #version 150
 
-in vec3 vertexPosition;
-in vec2 vertexTexCoords;
-in vec3 vertexNorm;
+#include "commonDefferedVS.glsl"
 
-out vec2 vertexTexCoordsOut;
 
-uniform mat4 MVP;
-
-void main()
-{
-	vertexTexCoordsOut=vertexTexCoords;
-	gl_Position = MVP * vec4(vertexPosition, 1.0);
+void main() {
+	UV =vertexTexCoords;
+	Norm = normalize(  mat3(MV)*vertexNorm );
+	vec4 vPos = gl_Position = MVP * vec4(vertexPosition, 1.0);	
+	VPos = vPos.xyz /  vPos.w;	
 }

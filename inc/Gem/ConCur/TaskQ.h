@@ -22,6 +22,7 @@ public:
 	protected:
 		void freeMem();
 		~Task() {}
+	public:
 		Template1 static T* alloc(){ return (T*)alloc(sizeof(T)); }
 	private: friend class TaskQ;
 		static ptr alloc(sizet s);
@@ -77,15 +78,15 @@ template<class T, class Cntx > struct TaskHlpr : public TaskHost<Cntx>::Task_Bas
 		freeMem();
 	}
 	void destruct() override { this->~TaskHlpr(); }
-	static TaskHlpr* ctor( const T &a ) { return new(alloc<TaskHlpr>()) TaskHlpr(a); }
+	//static TaskHlpr* ctor( const T &a ) { return new(alloc<TaskHlpr>()) TaskHlpr(a); }
 	T Foo;
 };
-#define TaskSchedule( Cntx, foo ) \
-{ \
-	auto lambda = [=](Cntx &cntx) { foo; }; \
-	typedef decltype(lambda) LambdaT;\
-	TaskHlpr<LambdaT,Cntx>::ctor( lambda ); \
-} 0
+
+template<class Cntx, class T > void taskHlpr( T && a ) {
+	new(TaskHlpr<T,Cntx>::alloc<TaskHlpr<T,Cntx>>()) TaskHlpr<T,Cntx>(a); 
+}
+	
+#define TaskSchedule( Cntx, foo ) { taskHlpr<Cntx>( [=](Cntx &cntx) { foo; } ); }0
 
 
 

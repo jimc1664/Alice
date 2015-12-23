@@ -6,7 +6,7 @@ vec3f& debugPosition();
 
 #include <Gem/Main.h>
 #include <Gem/MainWindow.h>
-#include <Gem/ConCur/Thread.h>
+#include <Gem/ConCur/WorkHost.h>
 #include <Gem/ConCur/ConCur.h>
 
 #include <Gem/Dis/ShaderProg.h>
@@ -37,7 +37,7 @@ vec3f& debugPosition();
 #include "Audio.h"
 #include <array> //counter
 
-
+bool debugFlag(const u32 &i);
 
 typedef Scene2::ScnNode<Scene2::Sprite> Label;
 class Button  : public Scene2::ScnNode<Scene2::Sprite> {
@@ -230,16 +230,22 @@ public:
 		StdShdr( CSTR("Media//shaders//textureVS.glsl"), CSTR("Media//shaders//textureFS.glsl") ),
 		PlanetShdr( CSTR("Media//shaders//planetVS.glsl"), CSTR("Media//shaders//planetFS.glsl")  ),
 		Tex1( CSTR("Media//armoredrecon_diff.png") ),
-		Tex2( CSTR("Media//Tank1DF.png") ),
+//		Tex2( CSTR("Media//Cobra Bomber//Object01cobrabomber.png") ),
+//		Mesh2( CSTR("Media//Cobra Bomber//Cobra_Bomber.fbx") ),
+	//	Tex2( CSTR("Media//Textures//sh3.png") ),
+	//	Mesh2( CSTR("Media//Sample_Ship.fbx") ),
+		Tex2( CSTR("Media//wasphunter_texture.png") ),
+		Mesh2( CSTR("Media//wasphunter.fbx") ),
+	//	Tex2( CSTR("Media//Morena smuggler ship//Morena_map-smuggler.png") ),
+	//	Mesh2( CSTR("Media//Morena smuggler ship//Morena smuggler ship.fbx") ),
 		NoiseTex( CSTR("Media//checker.png") ),
 		Mesh1( CSTR("Media//armoredrecon.fbx") ),
-		Mesh2( CSTR("Media//Tank1.FBX") ),
 		CarMat( Tex1, StdShdr),
 		TankMat(Tex2, StdShdr),
 		PlanetMat( NoiseTex, PlanetShdr), 
 		DefferedMat( NoiseTex, StdShdr),
 		Car(Mesh1, CarMat),
-		Tank(Mesh2, TankMat),
+		Ship(Mesh2, TankMat),
 		Cntr(CntrTex, vec2f(900, 50), 0.4f, 0)
 	{
 
@@ -284,9 +290,9 @@ public:
 		//Scene3::ScnNode<Scene3::Camera>* cam = Scene.add(new Scene3::ScnNode<Scene3::Camera>( vec3f(0,0,0) );
 		MoveObj = Scene.add(new Scene3::PlanetObj(PlanetMat, vec3f(0, 0, 0)));
 		MoveObj = Scene.add(new Scene3::TestObj(DefferedMat, vec3f(0, 0, 0)));
-		auto car = MoveObj = Scene.add(new Scene3::PassiveObj(Car, debugPosition() = vec3f(0, 10, 20)));
-		Scene.add( new Scene3::PassiveObj( Tank, vec3f(17,0,-3), quatF::identity(), vec3f(1,1,1)*1.25f ) );
-		Scene.add( new Scene3::PassiveObj( Tank, vec3f(-17,0,-3), quatF::identity(), vec3f(1,1,1)*0.75f ) );
+		auto car = MoveObj = Scene.add(new Scene3::PassiveObj(Car, vec3f(0, 10, 20)));
+		//Scene.add( new Scene3::PassiveObj( Ship, vec3f(17,0,-3), quatF::identity(), vec3f(1,1,1)*1.25f ) );
+		auto ship = Scene.add( new Scene3::PassiveObj( Ship, vec3f(-0,0,-20), quatF::identity() , vec3f(1,1,1)*0.0015f ) );
 
 		auto cam = Scene.add( new Scene3::CameraObj( vec3f(0,5,-30.0f) ) );
 		
@@ -301,6 +307,10 @@ public:
 		Dis::RS_Ortho ortho; ortho.ScrnSz = vec2u(1024, 768); ortho.Height = 768;
 		Dis::RS_Projection proj; proj.ScrnSz = vec2u(1024, 768);
 
+		//WorkHost::waitFor();
+
+		quatF rotOffset =  quatF::euler(vec3f(-80, 180,0 )* DEG_TO_RAD ); 
+		ship->Rot *= rotOffset;
 		bool lMove = false; vec2s16 lMp;
 		for(;!shutdown;) {
 			
@@ -308,32 +318,55 @@ public:
 			
 			Scene.update(deltaTime);
 
-			car->Pos =  debugPosition();
 			//		printf("p  %f %f %f \n", car->Pos.x, car->Pos.y, car->Pos.z);
-			if( MoveObj ) {
-				float speed = 5.0f  * deltaTime;
-				auto a = Mvmnt.value();
+			//if( MoveObj ) {
+			float speed = 5.0f  * deltaTime;
+			auto a = Mvmnt.value();
 
-				f32 disFromP = max( MoveObj->Pos.leng() -14.95f, 0.1f ); 
-				//speed *= disFromP /5.0f;
-				MoveObj->Pos += vec3f(a.x,0,a.y)*speed  * MoveObj->Rot.as<mat3f>() ;
-				//printf("p  %f %f %f \n", MoveObj->Pos.x, MoveObj->Pos.y, MoveObj->Pos.z);
-
-				//todo mouse drag object
-				if( JUI::key(JUI::Keycode::LMouse) ) {
-					if( lMove ) {
-						vec2f mr = ((vec2f)(lMp - JUI::mPos())) *deltaTime*1.0f;
-						//MoveObj->Rot = (quatF::euler( vec3f( mr.y, mr.x, 0)  ) * MoveObj->Rot ).normalise();
-
-						//MoveObj->Rot = (quatF::yRotation( mr.x ) * MoveObj->Rot );
-						//MoveObj->Rot = (quatF::xRotation( mr.y ) * MoveObj->Rot );
-						MoveObj->Rot *= quatF::euler(vec3f(mr.y, mr.x, 0));
-						MoveObj->Rot.normalise();
-					}
-					lMp = JUI::mPos();
-				}
-				lMove = JUI::key(JUI::Keycode::LMouse);
+			ship->Rot *= rotOffset.getInverse();
+			bool freeCam = debugFlag(8);
+			if( freeCam ) {
+				MoveObj = cam;
+			} else {
+				MoveObj = ship;
+				speed *= 0.2f;
 			}
+
+			f32 disFromP = max( MoveObj->Pos.leng() -14.95f, 0.1f ); 
+
+			if( !freeCam ) {
+				if(disFromP < 0.15) MoveObj->Pos = MoveObj->Pos.getNormal() * 15.1f;
+			}
+			//speed *= disFromP /5.0f;
+			MoveObj->Pos += vec3f(a.x,0,a.y)*speed  * MoveObj->Rot.as<mat3f>() ;
+			//printf("p  %f %f %f \n", MoveObj->Pos.x, MoveObj->Pos.y, MoveObj->Pos.z);
+
+			//todo mouse drag object
+			if( JUI::key(JUI::Keycode::LMouse) ) {
+				if( lMove ) {
+					vec2f mr = ((vec2f)(lMp - JUI::mPos())) *deltaTime*1.0f;
+					//MoveObj->Rot = (quatF::euler( vec3f( mr.y, mr.x, 0)  ) * MoveObj->Rot ).normalise();
+
+					//MoveObj->Rot = (quatF::yRotation( mr.x ) * MoveObj->Rot );
+					//MoveObj->Rot = (quatF::xRotation( mr.y ) * MoveObj->Rot );
+
+					auto r = quatF::euler(vec3f(mr.y, mr.x, 0));
+					MoveObj->Rot *= r;
+					MoveObj->Rot.normalise();
+
+			
+				}
+				lMp = JUI::mPos();
+			}
+			lMove = JUI::key(JUI::Keycode::LMouse);
+
+			if( !freeCam ) {
+				cam->Rot = nLerp(cam->Rot, ship->Rot, deltaTime *16.0f);
+				cam->Pos += (ship->Pos - vec3f(0, 0, 0.2)*cam->Rot.as<mat3f>() - cam->Pos) *  deltaTime *12.0f;
+			}
+			ship->Rot *= rotOffset;
+
+			//}
 
 			{
 				auto dl = bdl.forUpdate();			
@@ -368,7 +401,7 @@ public:
 	Scene3::Texture  Tex1, Tex2, NoiseTex;
 	Scene3::Material TankMat, CarMat, PlanetMat, DefferedMat;
 	Scene3::Mesh Mesh1, Mesh2;
-	Scene3::Passive Tank, Car;
+	Scene3::Passive Ship, Car;
 
 	//Res_FromFile<Scene3::Texture> Tex1, Tex2, NoiseTex;
 

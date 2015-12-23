@@ -12,9 +12,10 @@ namespace File {
 template<class CharT> class DStrTemplate  : public StringBase<CharT,DStrTemplate<CharT>>, public Serialisable<DStrTemplate<CharT>> {
 public:
 	DStrTemplate() {}
-
+	DStrTemplate(const Reserve &r) { Data.addMul(r.Amnt); }
 
 	Template1A DStrTemplate( CpySpcf<DStrTemplate,T1A> &a )  : Data( a.copy(a->Data) ) {}
+	DStrTemplate( DStrTemplate &&a )  : Data( Steal(a.Data) ) {}
 
 	Template1A void init( const StringBase_Sub<CharT,T1A> &a) { 
 		Assume(Data.count() == 0); 

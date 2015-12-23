@@ -5,6 +5,8 @@
 
 #include "Gem/Dis/DisMain.h"
 #include "../JUI/JUI_Main.h"
+#include "Gem/ConCur/WorkHost.h"
+#include "Gem/Resource/Resource.h"
 
 #include <stdio.h>
 
@@ -24,6 +26,8 @@ int main() {
 
 #ifndef UTIL_BUILD
 Gem_Main::Gem_Main() {
+	WorkHost::construct();
+	ResourceMan::construct();
 	Dis::DisMain::construct();
 	JUI::JUI_Main::construct();
 	Main_Hlpr::construct();
@@ -32,12 +36,16 @@ Gem_Main::~Gem_Main() {
 	Main_Hlpr::destruct();
 	JUI::JUI_Main::destruct();
 	Dis::DisMain::destruct();
+	WorkHost::shutdown();
+	ResourceMan::destruct();
+	WorkHost::destruct();
 }
 
 void Gem_Main::_shutdown() {
 	Main_Hlpr::shutdown();
-	Dis::DisMain::shutdown();
 	JUI::JUI_Main::shutdown();
+	Dis::DisMain::shutdown();
+	ResourceMan::shutdown();
 }
 
 Alloc_Singleton(Gem_Main);

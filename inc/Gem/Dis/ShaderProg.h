@@ -18,13 +18,15 @@ public:
 	static ShaderProg* fromFile(const CStr &vs, const CStr &ps );  //temporary
 	static ShaderProg* prep(const CStr &vs, const CStr &ps) { return fromFile(vs, ps); }
 
-	void fromFile(DisMain &dm, const CStr &vs, const CStr &ps );
+	void fromFile( WorkHost&, const CStr &vs, const CStr &ps );
 
-	void apply(RenderingCntx &rc, const mat4f &mvp );
+	void apply(RenderingCntx &rc, const mat4f &mvp, const mat4f &mv );
 
 
 //private:
 	Dis_Dat( GLuint, u32, Prog );
+	Dis_Dat( GLint, s32, MVPLocation );
+	Dis_Dat( GLint, s32, MVLocation );
 
 };
 

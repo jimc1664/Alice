@@ -65,8 +65,8 @@ public:
 #define This (*static_cast<const Upper*>(this))
 	
 	operator	const CharT* ()							const { return This.str(); }	
-				operator		bool()					const { return This.len() != 0; }	
-	Template1	const CharT		str()					const { return This.str(); }
+	operator		bool()					const { return This.len() != 0; }	
+	const CharT*		str()					const { return This.str(); }
 
 	const CharT& operator[]( const u32 &i ) { return (This.str())[i]; }
 
@@ -86,8 +86,91 @@ public:
 		return true;
 	}
 	Template1A bool operator == ( const T1A &r ) const { return isEqual(r,true); }
+	Template1A bool operator < ( const T1A &r ) const { 
+		if( r.len() == len() ) {
+			for( int i = len(); i--; ) {
+				if((*this)[i] == r[i]) continue;
+				else return (*this)[i] < r[i];
+			}
+			return false;
+		} else return len() < r.len();	
+	}
 
 	operator const CStrTemplate<CharT>()	const; 
+
+
+	bool search(const CharT& c, CStrTemplate<CharT> &res) const;
+	CStrTemplate<CharT> nextWord() const;
+	CStrTemplate<CharT> getPath() const;
+	CStrTemplate<CharT> trimmedDeadSpace() const;
+	CStrTemplate<CharT> getParam(const CharT &c ) const;
+
+	CStrTemplate<CharT> trimmedStartTo(const CharT* c ) const;
+	CStrTemplate<CharT> trimmedTo(const CharT* c ) const;
+
+	const CharT* start() const {  return This.str(); }
+	const CharT* end() const {  return This.str() + This.len(); }
+private:
+
+	static bool skipWhiteSpace( CharT *&dat, CharT * const end ) {
+		for( ; ; dat++ ) {
+			if((sizet)dat >= (sizet)end) return false;
+			switch( *dat ) {
+				case 10 : case 13 : case 9 : case ' ' :
+					break; //ignore whitespace
+				case'a':case'b':case'c':case'd':case'e':case'f':case'g':case'h':case'i':case'j':case'k':case'l':case'm':case'n':case'o':case'p':case'q':case'r':case's':case't':case'u':case'v':case'w':case'x':case'y':case'z':
+				case'A':case'B':case'C':case'D':case'E':case'F':case'G':case'H':case'I':case'J':case'K':case'L':case'M':case'N':case'O':case'P':case'Q':case'R':case'S':case'T':case'U':case'V':case'W':case'X':case'Y':case'Z':
+				case'0':case'1':case'2':case'3':case'4':case'5':case'6':case'7':case'8':case'9':
+				case'"':case'_':case'#':case'(':case')':case'{':case'}':case'[':case']':case'+':case'-':case'*':case'/':case'\\':case'=':case':':case';':case'.':case'>':case'<':case',':case'%':case'&':case'^':case'|':case'!':case'?':
+					return true;				
+			}
+		}
+		return false;
+	}
+	static bool findWhiteSpace( CharT *&dat, CharT *const end ) {
+		for( ; ; dat++ ) {
+			if((sizet)dat >= (sizet)end) return false;
+			switch( *dat ) {
+				case 10 : case 13 : case 9 : case ' ' :
+					return true; //ignore whitespace
+				case'a':case'b':case'c':case'd':case'e':case'f':case'g':case'h':case'i':case'j':case'k':case'l':case'm':case'n':case'o':case'p':case'q':case'r':case's':case't':case'u':case'v':case'w':case'x':case'y':case'z':
+				case'A':case'B':case'C':case'D':case'E':case'F':case'G':case'H':case'I':case'J':case'K':case'L':case'M':case'N':case'O':case'P':case'Q':case'R':case'S':case'T':case'U':case'V':case'W':case'X':case'Y':case'Z':
+				case'0':case'1':case'2':case'3':case'4':case'5':case'6':case'7':case'8':case'9':
+				case'"':case'_':case'#':case'(':case')':case'{':case'}':case'[':case']':case'+':case'-':case'*':case'/':case'\\':case'=':case':':case';':case'.':case'>':case'<':case',':case'%':case'&':case'^':case'|':case'!':case'?':
+					break;
+			}
+		}
+		return false;
+	}
+	static bool find( CharT *&dat, CharT *const end , const CharT &c ) {
+		for( ; ; dat++ ) {
+			if((sizet)dat >= (sizet)end) return false;
+			if(*dat == c) return true;
+		}
+		return false;
+	}
+	static bool rvsFind( CharT * const dat, CharT *& end, const CharT &c1, const CharT &c2 ) {
+		for( ; ; end-- ) {
+			if((sizet)dat >= (sizet)end) return false;
+			if(*(end-1) == c1 || *(end-1) == c2 ) return true;
+		}
+		return false;
+	}
+	static bool trimEndDeadSpace( CharT * const dat, CharT *& end ) {
+		for( ; ; end-- ) {
+			if((sizet)dat >= (sizet)end) return false;
+			switch( *(end-1) ) {
+				case 10 : case 13 : case 9 : case 0: case ' ' :
+					break; //ignore whitespace
+				case'a':case'b':case'c':case'd':case'e':case'f':case'g':case'h':case'i':case'j':case'k':case'l':case'm':case'n':case'o':case'p':case'q':case'r':case's':case't':case'u':case'v':case'w':case'x':case'y':case'z':
+				case'A':case'B':case'C':case'D':case'E':case'F':case'G':case'H':case'I':case'J':case'K':case'L':case'M':case'N':case'O':case'P':case'Q':case'R':case'S':case'T':case'U':case'V':case'W':case'X':case'Y':case'Z':
+				case'0':case'1':case'2':case'3':case'4':case'5':case'6':case'7':case'8':case'9':
+				case'"':case'_':case'#':case'(':case')':case'{':case'}':case'[':case']':case'+':case'-':case'*':case'/':case'\\':case'=':case':':case';':case'.':case'>':case'<':case',':case'%':case'&':case'^':case'|':case'!':case'?':
+					return true;				
+			}
+		}
+	}
+
 #undef This
 };
 
@@ -171,6 +254,55 @@ Template2 bool operator == ( const CStrTemplate<CharT>& l, const T2 &r ) { retur
 */
 
 template<class CharT, class Upper> StringBase<CharT,Upper>::operator const CStrTemplate<CharT>()	const { return CStrTemplate<CharT>((const CharT*)*this,len()); }
+
+template<class CharT, class Upper> bool StringBase<CharT,Upper>::search(const CharT& c, CStrTemplate<CharT> &res) const {
+	CharT* dat = const_cast<CharT*>( str() ), *end = dat+len();
+	for( ; (sizet)dat < (sizet)end; dat++ )
+		if( *dat == c ) {
+			res = CStrTemplate<CharT>(dat,(sizet)end - (sizet)dat );
+			return true;
+		}
+	return false;
+}
+
+template<class CharT, class Upper> CStrTemplate<CharT> StringBase<CharT,Upper>::nextWord() const {
+	CharT* dat = const_cast<CharT*>( str() ), *end = dat+len();
+	if(!skipWhiteSpace(dat, end)) Error("String parsing error - no next word");
+	CharT* wrdEnd = dat;
+	if( !findWhiteSpace(wrdEnd, end) ) Error("String parsing error - no next word");
+	return CStrTemplate<CharT>(dat,(sizet)wrdEnd - (sizet)dat );
+}
+template<class CharT, class Upper> CStrTemplate<CharT> StringBase<CharT,Upper>::trimmedDeadSpace() const {
+	CharT* dat = const_cast<CharT*>( str() ), *end = dat+len();
+	trimEndDeadSpace(dat, end);
+	return CStrTemplate<CharT>(dat,(sizet)end - (sizet)dat );
+}
+
+template<class CharT, class Upper> CStrTemplate<CharT> StringBase<CharT,Upper>::getParam( const CharT& c ) const {
+	CharT* dat = const_cast<CharT*>( str() ), *end = dat+len();
+
+	if(!find(dat, end, c )) Error("String parsing error - getParam 1 ");
+	CharT* pEnd = ++dat;
+	if(!find(pEnd, end, c )) Error("String parsing error - getParam 2 ");
+	return CStrTemplate<CharT>(dat,(sizet)pEnd - (sizet)dat );
+}
+
+template<class CharT, class Upper> CStrTemplate<CharT> StringBase<CharT,Upper>::trimmedStartTo( const CharT * c ) const {
+	CharT* dat = const_cast<CharT*>( str() ), *end = dat+len();
+	return CStrTemplate<CharT>( c,(sizet)end - (sizet)c );
+}
+template<class CharT, class Upper> CStrTemplate<CharT> StringBase<CharT,Upper>::trimmedTo( const CharT * c ) const {
+	CharT* dat = const_cast<CharT*>( str() ), *end = dat+len();
+	return CStrTemplate<CharT>( dat,(sizet)c - (sizet)dat );
+}
+
+template<class CharT, class Upper> CStrTemplate<CharT> StringBase<CharT,Upper>::getPath() const {
+	CharT* dat = const_cast<CharT*>( str() ), *end = dat+len();
+
+	rvsFind(dat, end, '/', '\\' );
+
+	return  CStrTemplate<CharT>(dat,(sizet)end - (sizet)dat );
+}
 
 /*
 struct StackString : public CStr {

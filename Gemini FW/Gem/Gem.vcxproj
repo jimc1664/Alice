@@ -458,10 +458,13 @@
     <ClInclude Include="..\..\inc\Gem\Basic\Math.h" />
     <ClInclude Include="..\..\inc\Gem\Basic\Singleton.h" />
     <ClInclude Include="..\..\inc\Gem\Basic\Tuple.h" />
+    <ClInclude Include="..\..\inc\Gem\ConCur\Atomic.h" />
     <ClInclude Include="..\..\inc\Gem\ConCur\CritSec.h" />
     <ClInclude Include="..\..\inc\Gem\ConCur\ConCur.h" />
+    <ClInclude Include="..\..\inc\Gem\ConCur\RefCounter.h" />
     <ClInclude Include="..\..\inc\Gem\ConCur\TaskQ.h" />
     <ClInclude Include="..\..\inc\Gem\ConCur\Thread.h" />
+    <ClInclude Include="..\..\inc\Gem\ConCur\WorkHost.h" />
     <ClInclude Include="..\..\inc\Gem\Dis\Camera.h" />
     <ClInclude Include="..\..\inc\Gem\Dis\DisMain.h" />
     <ClInclude Include="..\..\inc\Gem\Dis\DrawList.h" />
@@ -530,6 +533,8 @@
     <ClCompile Include="Scene2\Scene2.cpp" />
     <ClCompile Include="Scene3\Scene3.cpp" />
     <ClCompile Include="String.cpp" />
+    <ClCompile Include="Util\Resource.cpp" />
+    <ClCompile Include="Util\WorkHost.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

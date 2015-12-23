@@ -9,6 +9,17 @@ public:
 	struct Handle  : public Uncopyable {
 		Handle( CritSec &cs ) : CS(cs) { CS.lock(); }
 		~Handle() { CS.unlock(); }
+
+
+
+		//do not use these..
+		void forceUnlock()  {
+			 CS.unlock(); 
+		}
+		void forceLock()  {
+			 CS.lock(); 
+		}
+
 	private:
 		CritSec &CS;
 	};

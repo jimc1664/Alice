@@ -32,6 +32,7 @@ public:
 		auto n = static_cast<Node*>(a);
 		return a;
 	}
+	Template1 void add() { new (add_NCtor<T>()) T (); 	}
 	Template2 void add( T2 &&a ) { new (add_NCtor<T>()) T (a); 	}
 	Template3 void add( T2 &&b, T3 &&c ) { new (add_NCtor<T>()) T (b, c); }
 	Template4 void add( T2 &&b, T3 &&c, T4 &&d ) { new (add_NCtor<T>()) T (b, c, d); }

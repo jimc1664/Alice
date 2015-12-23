@@ -9,7 +9,7 @@
 
 namespace Gem {  namespace Dis {
 
-class Texture : public Resource<Texture>  { //:  public dListNode<Texture> {
+class Texture {//: public Resource<Texture>  { //:  public dListNode<Texture> {
 public:
 	Texture(  );
 

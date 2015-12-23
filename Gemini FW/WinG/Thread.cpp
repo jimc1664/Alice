@@ -57,3 +57,28 @@ bool ConCur::compareSwap( volatile u32 &at, const u32 &with, const u32 &prev  ) 
 void ConCur::fullExit(int ec ) {
 	ExitProcess(ec);
 }
+
+#include "Gem/ConCur/RefCounter.h"
+
+
+bool RefCounter::decRef() { return InterlockedDecrement( &Reference) == 0; }
+u32 RefCounter::incRef() { return InterlockedIncrement( &Reference); }
+
+#include "Gem/ConCur/Atomic.h"
+
+Template1 T AtomicT<T>::increment() {
+	return InterlockedIncrement( &Val );
+}
+
+Template1 T AtomicT<T>::decrement() {
+	return InterlockedDecrement( &Val );
+}
+Template1 bool AtomicT<T>::trySet( const T &a, const T &b ) {
+	return b == InterlockedCompareExchange( &Val, a, b );
+}
+Template1 bool AtomicT<T>::trySet( const T &a ) { T b = Val; return trySet( a, b ); }
+
+void _notToBeCalled_Atomic() {
+	{ Atomic32 a; a.increment(); a.decrement(); a.trySet(0); }
+	{ Atomic64 a; a.increment(); a.decrement(); a.trySet(0); }
+}

@@ -1,5 +1,7 @@
 #version 150
 
+#include "common.glsl"
+
 out vec4 FragColor;
 
 void main()
